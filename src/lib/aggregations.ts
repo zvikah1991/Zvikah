@@ -1,4 +1,4 @@
-import type { Filters, SalesRecord } from "../types";
+import type { Filters, SalesRecord, StatusBucket } from "../types";
 import { monthKeyOf } from "./format";
 
 export function applyFilters(records: SalesRecord[], filters: Filters, opts?: { ignoreDate?: boolean }): SalesRecord[] {
@@ -174,6 +174,76 @@ export function monthOverMonth(records: SalesRecord[]): MonthOverMonth | null {
     premiumDeltaPct: previous ? pct(current.premium, previous.premium) : null,
     countDeltaPct: previous ? pct(current.count, previous.count) : null,
   };
+}
+
+export interface ProcessTypeStatusPoint {
+  key: string;
+  good: number;
+  warning: number;
+  critical: number;
+  goodPremium: number;
+  warningPremium: number;
+  criticalPremium: number;
+  total: number;
+  totalPremium: number;
+}
+
+const EMPTY_PROCESS_TYPE_POINT: Omit<ProcessTypeStatusPoint, "key"> = {
+  good: 0,
+  warning: 0,
+  critical: 0,
+  goodPremium: 0,
+  warningPremium: 0,
+  criticalPremium: 0,
+  total: 0,
+  totalPremium: 0,
+};
+
+/** For each process type (e.g. "שיחלוף מוצר"), counts + sums premium per status bucket. */
+export function statusByProcessType(records: SalesRecord[], bucketOf: (status: string | null) => StatusBucket): ProcessTypeStatusPoint[] {
+  const map = new Map<string, ProcessTypeStatusPoint>();
+  for (const r of records) {
+    const key = r.processType ?? "לא צוין";
+    const point = map.get(key) ?? { key, ...EMPTY_PROCESS_TYPE_POINT };
+    const bucket = bucketOf(r.status);
+    const premium = r.expectedPremium ?? 0;
+    if (bucket === "good") {
+      point.good += 1;
+      point.goodPremium += premium;
+    } else if (bucket === "critical") {
+      point.critical += 1;
+      point.criticalPremium += premium;
+    } else {
+      point.warning += 1;
+      point.warningPremium += premium;
+    }
+    point.total += 1;
+    point.totalPremium += premium;
+    map.set(key, point);
+  }
+  return Array.from(map.values()).sort((a, b) => b.totalPremium - a.totalPremium);
+}
+
+/** Keeps the top N process types by premium, folding the remainder into "Other". */
+export function topNProcessTypesWithOther(points: ProcessTypeStatusPoint[], n: number): ProcessTypeStatusPoint[] {
+  if (points.length <= n) return points;
+  const head = points.slice(0, n);
+  const tail = points.slice(n);
+  const other = tail.reduce<ProcessTypeStatusPoint>(
+    (acc, p) => ({
+      key: OTHER_LABEL,
+      good: acc.good + p.good,
+      warning: acc.warning + p.warning,
+      critical: acc.critical + p.critical,
+      goodPremium: acc.goodPremium + p.goodPremium,
+      warningPremium: acc.warningPremium + p.warningPremium,
+      criticalPremium: acc.criticalPremium + p.criticalPremium,
+      total: acc.total + p.total,
+      totalPremium: acc.totalPremium + p.totalPremium,
+    }),
+    { key: OTHER_LABEL, ...EMPTY_PROCESS_TYPE_POINT },
+  );
+  return [...head, other];
 }
 
 export function distinctSorted(records: SalesRecord[], field: "rep" | "status" | "processType" | "insurer" | "productType"): string[] {

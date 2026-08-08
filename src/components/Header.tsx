@@ -3,6 +3,7 @@ import type { DataMeta } from "../types";
 import { relativeUpdatedAt } from "../lib/format";
 import { IconMoon, IconSun, IconTrash, IconUpload } from "./ui/Icons";
 import type { Theme } from "../lib/storage";
+import { AGENCY_NAME, APP_SUBTITLE, APP_TITLE } from "../config";
 
 export function Header({
   meta,
@@ -34,8 +35,10 @@ export function Header({
             </svg>
           </div>
           <div className="leading-tight">
-            <h1 className="text-base font-bold">דשבורד מכירות</h1>
-            <p className="text-xs text-[var(--text-muted)]">Zvikah · ניהול תהליכי מכירה</p>
+            <h1 className="text-base font-bold">{APP_TITLE}</h1>
+            <p className="text-xs text-[var(--text-muted)]">
+              {AGENCY_NAME} · {APP_SUBTITLE}
+            </p>
           </div>
         </div>
 

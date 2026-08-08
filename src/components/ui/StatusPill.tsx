@@ -1,15 +1,8 @@
-import { statusBucket } from "../../lib/statusBuckets";
-
-const COLORS: Record<string, string> = {
-  good: "var(--status-good)",
-  warning: "var(--status-warning)",
-  critical: "var(--status-critical)",
-  neutral: "var(--text-muted)",
-};
+import { STATUS_BUCKET_COLOR_VAR, statusBucket } from "../../lib/statusBuckets";
 
 export function StatusPill({ status }: { status: string | null }) {
   const bucket = statusBucket(status);
-  const color = COLORS[bucket];
+  const color = STATUS_BUCKET_COLOR_VAR[bucket];
   return (
     <span
       className="inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium"

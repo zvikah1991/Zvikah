@@ -18,3 +18,10 @@ export const STATUS_BUCKET_LABEL: Record<StatusBucket, string> = {
   critical: "בוטל / נדחה",
   neutral: "לא ידוע",
 };
+
+export const STATUS_BUCKET_COLOR_VAR: Record<StatusBucket, string> = {
+  good: "var(--status-good)",
+  warning: "var(--status-warning)",
+  critical: "var(--status-critical)",
+  neutral: "var(--text-muted)",
+};

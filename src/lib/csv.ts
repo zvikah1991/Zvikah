@@ -1,6 +1,8 @@
 import type { SalesRecord } from "../types";
+import type { CustomerSummary } from "./customers";
+import { formatDate } from "./format";
 
-const COLUMNS: { key: keyof SalesRecord; label: string }[] = [
+const RECORD_COLUMNS: { key: keyof SalesRecord; label: string }[] = [
   { key: "id", label: "מספר תהליך" },
   { key: "processType", label: "סוג תהליך" },
   { key: "customer", label: "לקוח" },
@@ -19,10 +21,8 @@ function escapeCsvCell(value: unknown): string {
   return s;
 }
 
-export function exportRecordsToCsv(records: SalesRecord[], filename: string): void {
-  const header = COLUMNS.map((c) => c.label).join(",");
-  const rows = records.map((r) => COLUMNS.map((c) => escapeCsvCell(r[c.key])).join(","));
-  const csv = [header, ...rows].join("\r\n");
+function downloadCsv(header: string[], rows: string[][], filename: string): void {
+  const csv = [header, ...rows].map((row) => row.map(escapeCsvCell).join(",")).join("\r\n");
   const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -32,4 +32,25 @@ export function exportRecordsToCsv(records: SalesRecord[], filename: string): vo
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+export function exportRecordsToCsv(records: SalesRecord[], filename: string): void {
+  const header = RECORD_COLUMNS.map((c) => c.label);
+  const rows = records.map((r) => RECORD_COLUMNS.map((c) => String(r[c.key] ?? "")));
+  downloadCsv(header, rows, filename);
+}
+
+export function exportCustomersToCsv(customers: CustomerSummary[], filename: string): void {
+  const header = ["לקוח", "מזהה לקוח", "מס' עסקאות", "סה\"כ פרמיה", "נציגים", "חברות ביטוח", "סטטוס אחרון", "תאריך אחרון"];
+  const rows = customers.map((c) => [
+    c.customer,
+    c.customerId !== null ? String(c.customerId) : "",
+    String(c.dealCount),
+    String(c.totalPremium),
+    c.reps.join("; "),
+    c.insurers.join("; "),
+    c.lastStatus ?? "",
+    formatDate(c.lastDate),
+  ]);
+  downloadCsv(header, rows, filename);
 }

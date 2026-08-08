@@ -6,9 +6,21 @@ import { formatCurrencyCompact, formatMonthKey, formatMonthKeyShort, formatNumbe
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
+const MONTHS_BACK_OPTIONS = [
+  { value: "6", label: "6 חודשים אחרונים" },
+  { value: "12", label: "12 חודשים אחרונים" },
+  { value: "24", label: "24 חודשים אחרונים" },
+  { value: "all", label: "כל התקופה" },
+];
+
 export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
   const [metric, setMetric] = useState<"premium" | "count">("premium");
-  const trend = useMemo(() => monthlyTrend(records), [records]);
+  const [monthsBack, setMonthsBack] = useState<string>("12");
+  const fullTrend = useMemo(() => monthlyTrend(records), [records]);
+  const trend = useMemo(
+    () => (monthsBack === "all" ? fullTrend : fullTrend.slice(-Number(monthsBack))),
+    [fullTrend, monthsBack],
+  );
   // Cap the number of labeled ticks so months never overlap, regardless of container width.
   const tickInterval = Math.max(0, Math.ceil(trend.length / 8) - 1);
 
@@ -22,9 +34,24 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
 
   return (
     <ChartCard
-      title="מכירות לפי חודש"
-      subtitle="לפי תאריך טיפול נדרש"
-      toggle={<MetricToggle metric={metric} onChange={setMetric} />}
+      title="מכירות חודשי כללי"
+      subtitle="לפי תאריך טיפול נדרש · לא מושפע מסינון התאריכים הראשי"
+      toggle={
+        <div className="flex items-center gap-2">
+          <select
+            value={monthsBack}
+            onChange={(e) => setMonthsBack(e.target.value)}
+            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs outline-none"
+          >
+            {MONTHS_BACK_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          <MetricToggle metric={metric} onChange={setMetric} />
+        </div>
+      }
       tableRows={tableRows}
       className="col-span-2"
       chart={
@@ -45,6 +72,7 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
                 />
                 <YAxis
                   tickFormatter={(v) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v))}
+                  allowDecimals={metric !== "premium" ? false : undefined}
                   tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}

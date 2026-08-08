@@ -51,6 +51,7 @@ export function RankedBarChart({
                 <XAxis
                   type="number"
                   tickFormatter={(v) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v))}
+                  allowDecimals={metric !== "premium" ? false : undefined}
                   tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}

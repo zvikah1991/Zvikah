@@ -2,15 +2,17 @@ import { useMemo, useState } from "react";
 import { EMPTY_FILTERS, type Filters } from "./types";
 import { useSalesData } from "./hooks/useSalesData";
 import { useTheme } from "./hooks/useTheme";
-import { applyFilters, groupByField, sortByMetric, topNWithOther } from "./lib/aggregations";
+import { applyFilters, groupByField } from "./lib/aggregations";
 import { buildColorScale } from "./lib/colorScale";
 import { Header } from "./components/Header";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
 import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
 import { RepBarChart } from "./components/charts/RepBarChart";
-import { StatusDonutChart } from "./components/charts/StatusDonutChart";
+import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
 import { RankedBarChart } from "./components/charts/RankedBarChart";
+import { RecentClosedList } from "./components/RecentClosedList";
+import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
 import { ErrorBanner } from "./components/ui/ErrorBanner";
 
@@ -23,12 +25,7 @@ export default function App() {
   const filteredIgnoringDate = useMemo(() => applyFilters(records, filters, { ignoreDate: true }), [records, filters]);
 
   const repColorScale = useMemo(() => buildColorScale(groupByField(records, "rep")), [records]);
-  const statusColorScale = useMemo(
-    () => buildColorScale(topNWithOther(sortByMetric(groupByField(records, "status"), "count"), 7)),
-    [records],
-  );
-  const insurerColorScale = useMemo(() => buildColorScale(topNWithOther(groupByField(records, "insurer"), 6)), [records]);
-  const productColorScale = useMemo(() => buildColorScale(topNWithOther(groupByField(records, "productType"), 6)), [records]);
+  const insurerColorScale = useMemo(() => buildColorScale(groupByField(records, "insurer")), [records]);
 
   return (
     <div className="min-h-screen">
@@ -52,13 +49,14 @@ export default function App() {
         <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <MonthlyTrendChart records={filtered} />
+          <MonthlyTrendChart records={filteredIgnoringDate} />
           <RepBarChart records={filtered} colorScale={repColorScale} />
-          <StatusDonutChart records={filtered} colorScale={statusColorScale} />
-          <RankedBarChart title="מכירות לפי יצרן" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} />
-          <RankedBarChart title="מכירות לפי סוג מוצר" records={filtered} field="productType" colorScale={productColorScale} topN={6} />
+          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} />
+          <ProcessTypeStatusChart records={filtered} />
         </div>
 
+        <RecentClosedList records={filtered} />
+        <CustomersTable records={filtered} />
         <DataTable records={filtered} />
 
         <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
