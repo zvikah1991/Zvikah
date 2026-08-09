@@ -5,8 +5,8 @@ import { clearStoredData, loadStoredData, saveData } from "../lib/storage";
 import { parseWorkflowsExcel } from "../lib/excelParser";
 
 const SEED_META: DataMeta = {
-  updatedAt: "2026-08-09T09:29:53.000Z",
-  fileName: "WorkflowsExport_982026_092953.xlsx (נתוני דוגמה)",
+  updatedAt: "2026-08-09T11:37:49.000Z",
+  fileName: "WorkflowsExport_982026_113749.xlsx (נתוני דוגמה)",
   recordCount: (seedRecords as SalesRecord[]).length,
 };
 

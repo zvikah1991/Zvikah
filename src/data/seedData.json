@@ -1,5 +1,57 @@
 [
 {
+"id": 968,
+"processType": "מינוי סוכן ללא שינויים",
+"customer": "קמרינסקי יוסף",
+"status": "חדש",
+"rep": "זיו רוזין",
+"requiredDate": "2026-08-09",
+"expectedPremium": 600.0,
+"owner": "זיו רוזין",
+"customerId": 5043997,
+"insurer": null,
+"productType": null
+},
+{
+"id": 967,
+"processType": "רכישת מוצר חדש",
+"customer": "בן חמו יונתן",
+"status": "חדש",
+"rep": "זיו רוזין",
+"requiredDate": "2026-08-09",
+"expectedPremium": 70.0,
+"owner": "זיו רוזין",
+"customerId": 312130172,
+"insurer": "איילון ביטוח",
+"productType": "ביטוח חיים משכנתא"
+},
+{
+"id": 966,
+"processType": "רכישת מוצר חדש",
+"customer": "דבוש איתמר",
+"status": "חדש",
+"rep": "זיו רוזין",
+"requiredDate": "2026-08-09",
+"expectedPremium": 67.0,
+"owner": "זיו רוזין",
+"customerId": 205822281,
+"insurer": "כלל ביטוח",
+"productType": "ביטוח חיים משכנתא"
+},
+{
+"id": 965,
+"processType": "שיחלוף מוצר",
+"customer": "סבינוב סבטלנה",
+"status": "חדש",
+"rep": "זיו רוזין",
+"requiredDate": "2026-08-09",
+"expectedPremium": 72.0,
+"owner": "זיו רוזין",
+"customerId": 318061181,
+"insurer": "מנורה מבטחים ביטוח",
+"productType": "ביטוח חיים"
+},
+{
 "id": 959,
 "processType": "רכישת מוצר חדש",
 "customer": "פרבר עודד",

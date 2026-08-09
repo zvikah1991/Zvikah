@@ -4,13 +4,12 @@ import type { SalesRecord } from "../../types";
 import { statusBreakdownForProcessTypes } from "../../lib/aggregations";
 import { buildColorScale, colorFor } from "../../lib/colorScale";
 import { formatNumber } from "../../lib/format";
+import { CORE_PROCESS_TYPES } from "../../config";
 import { ChartCard } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
-const PROCESS_TYPES = ["שיחלוף מוצר", "רכישת מוצר חדש"];
-
 export function ProcessTypeStatusChart({ records }: { records: SalesRecord[] }) {
-  const { rows, statuses } = useMemo(() => statusBreakdownForProcessTypes(records, PROCESS_TYPES), [records]);
+  const { rows, statuses } = useMemo(() => statusBreakdownForProcessTypes(records, CORE_PROCESS_TYPES), [records]);
 
   const colorScale = useMemo(() => buildColorScale(statuses.map((s) => ({ key: s, premium: 0, count: 0 }))), [statuses]);
 

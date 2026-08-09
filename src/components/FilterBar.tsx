@@ -2,33 +2,11 @@ import { useMemo, useState } from "react";
 import type { Filters, SalesRecord } from "../types";
 import { EMPTY_FILTERS } from "../types";
 import { distinctSorted } from "../lib/aggregations";
-import { isoDaysAgo, startOfMonthISO, startOfYearISO, todayISO } from "../lib/format";
+import { formatMonthKeyShort, monthKeyOf, monthRangeISO, yearOf, yearRangeISO } from "../lib/format";
 import { MultiSelect } from "./ui/MultiSelect";
 import clsx from "clsx";
 
-type Preset = "all" | "month" | "last30" | "last90" | "quarter" | "year" | "custom";
-
-function detectPreset(filters: Filters): Preset {
-  if (!filters.dateFrom && !filters.dateTo) return "all";
-  const today = todayISO();
-  if (filters.dateTo === today) {
-    if (filters.dateFrom === startOfMonthISO()) return "month";
-    if (filters.dateFrom === isoDaysAgo(30)) return "last30";
-    if (filters.dateFrom === isoDaysAgo(90)) return "last90";
-    if (filters.dateFrom === startOfMonthISO(-2)) return "quarter";
-    if (filters.dateFrom === startOfYearISO()) return "year";
-  }
-  return "custom";
-}
-
-const PRESETS: { id: Preset; label: string }[] = [
-  { id: "all", label: "כל הזמנים" },
-  { id: "month", label: "החודש" },
-  { id: "last30", label: "30 יום אחרונים" },
-  { id: "last90", label: "90 יום אחרונים" },
-  { id: "quarter", label: "רבעון אחרון" },
-  { id: "year", label: "השנה" },
-];
+type Mode = "all" | "month" | "year" | "custom";
 
 export function FilterBar({
   allRecords,
@@ -47,31 +25,36 @@ export function FilterBar({
   const insurers = useMemo(() => distinctSorted(allRecords, "insurer"), [allRecords]);
   const productTypes = useMemo(() => distinctSorted(allRecords, "productType"), [allRecords]);
 
-  const activePreset = detectPreset(filters);
+  const monthOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const r of allRecords) if (r.requiredDate) set.add(monthKeyOf(r.requiredDate));
+    return Array.from(set).sort().reverse();
+  }, [allRecords]);
 
-  const applyPreset = (preset: Preset) => {
-    switch (preset) {
-      case "all":
-        onChange({ ...filters, dateFrom: null, dateTo: null });
-        break;
-      case "month":
-        onChange({ ...filters, dateFrom: startOfMonthISO(), dateTo: todayISO() });
-        break;
-      case "last30":
-        onChange({ ...filters, dateFrom: isoDaysAgo(30), dateTo: todayISO() });
-        break;
-      case "last90":
-        onChange({ ...filters, dateFrom: isoDaysAgo(90), dateTo: todayISO() });
-        break;
-      case "quarter":
-        onChange({ ...filters, dateFrom: startOfMonthISO(-2), dateTo: todayISO() });
-        break;
-      case "year":
-        onChange({ ...filters, dateFrom: startOfYearISO(), dateTo: todayISO() });
-        break;
+  const yearOptions = useMemo(() => {
+    const set = new Set<number>();
+    for (const r of allRecords) if (r.requiredDate) set.add(yearOf(r.requiredDate));
+    return Array.from(set).sort((a, b) => b - a);
+  }, [allRecords]);
+
+  const { mode, month: activeMonth, year: activeYear } = useMemo((): { mode: Mode; month?: string; year?: number } => {
+    if (!filters.dateFrom && !filters.dateTo) return { mode: "all" };
+    for (const m of monthOptions) {
+      const r = monthRangeISO(m);
+      if (filters.dateFrom === r.from && filters.dateTo === r.to) return { mode: "month", month: m };
     }
-    setCustomOpen(false);
-  };
+    for (const y of yearOptions) {
+      const r = yearRangeISO(y);
+      if (filters.dateFrom === r.from && filters.dateTo === r.to) return { mode: "year", year: y };
+    }
+    return { mode: "custom" };
+  }, [filters.dateFrom, filters.dateTo, monthOptions, yearOptions]);
+
+  const pillClass = (active: boolean) =>
+    clsx(
+      "rounded-lg border-0 bg-transparent px-2.5 py-1 text-sm outline-none transition-colors",
+      active ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-medium" : "text-[var(--text-secondary)] hover:bg-[var(--surface)]/60",
+    );
 
   const activeFilterCount =
     (filters.dateFrom || filters.dateTo ? 1 : 0) +
@@ -86,31 +69,60 @@ export function FilterBar({
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
-          {PRESETS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => applyPreset(p.id)}
-              className={clsx(
-                "rounded-lg px-2.5 py-1 text-sm transition-colors",
-                activePreset === p.id
-                  ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-medium"
-                  : "text-[var(--text-secondary)] hover:bg-[var(--surface)]/60",
-              )}
-            >
-              {p.label}
-            </button>
-          ))}
           <button
             type="button"
-            onClick={() => setCustomOpen((o) => !o)}
-            className={clsx(
-              "rounded-lg px-2.5 py-1 text-sm transition-colors",
-              activePreset === "custom"
-                ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-medium"
-                : "text-[var(--text-secondary)] hover:bg-[var(--surface)]/60",
-            )}
+            onClick={() => {
+              onChange({ ...filters, dateFrom: null, dateTo: null });
+              setCustomOpen(false);
+            }}
+            className={pillClass(mode === "all")}
           >
+            כל הזמנים
+          </button>
+
+          <select
+            value={mode === "month" ? activeMonth : ""}
+            onChange={(e) => {
+              const m = e.target.value;
+              if (!m) return;
+              const r = monthRangeISO(m);
+              onChange({ ...filters, dateFrom: r.from, dateTo: r.to });
+              setCustomOpen(false);
+            }}
+            className={pillClass(mode === "month")}
+          >
+            <option value="" disabled>
+              חודש
+            </option>
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>
+                {formatMonthKeyShort(m)}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={mode === "year" ? String(activeYear) : ""}
+            onChange={(e) => {
+              const y = e.target.value;
+              if (!y) return;
+              const r = yearRangeISO(Number(y));
+              onChange({ ...filters, dateFrom: r.from, dateTo: r.to });
+              setCustomOpen(false);
+            }}
+            className={pillClass(mode === "year")}
+          >
+            <option value="" disabled>
+              שנה
+            </option>
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+
+          <button type="button" onClick={() => setCustomOpen((o) => !o)} className={pillClass(mode === "custom")}>
             טווח מותאם
           </button>
         </div>

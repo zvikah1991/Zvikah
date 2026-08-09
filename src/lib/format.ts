@@ -70,26 +70,24 @@ export function monthKeyOf(iso: string): string {
   return iso.slice(0, 7);
 }
 
-export function todayISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
 }
 
-export function isoDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+/** yyyy-mm -> the first/last ISO date of that calendar month. */
+export function monthRangeISO(monthKey: string): { from: string; to: string } {
+  const [y, m] = monthKey.split("-").map(Number);
+  const lastDay = new Date(y, m, 0).getDate();
+  return { from: `${y}-${pad2(m)}-01`, to: `${y}-${pad2(m)}-${pad2(lastDay)}` };
 }
 
-export function startOfMonthISO(offsetMonths = 0): string {
-  const d = new Date();
-  d.setMonth(d.getMonth() + offsetMonths, 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+/** The first/last ISO date of a calendar year. */
+export function yearRangeISO(year: number): { from: string; to: string } {
+  return { from: `${year}-01-01`, to: `${year}-12-31` };
 }
 
-export function startOfYearISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-01-01`;
+export function yearOf(iso: string): number {
+  return Number(iso.slice(0, 4));
 }
 
 export function relativeUpdatedAt(iso: string): string {

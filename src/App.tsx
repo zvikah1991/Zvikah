@@ -4,9 +4,11 @@ import { useSalesData } from "./hooks/useSalesData";
 import { useTheme } from "./hooks/useTheme";
 import { applyFilters, groupByField } from "./lib/aggregations";
 import { buildColorScale } from "./lib/colorScale";
+import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
 import { Header } from "./components/Header";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
+import { AgentAppointmentBanner } from "./components/AgentAppointmentBanner";
 import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
 import { RepByMonthChart } from "./components/charts/RepByMonthChart";
 import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
@@ -21,11 +23,24 @@ export default function App() {
   const { theme, toggle } = useTheme();
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
 
-  const filtered = useMemo(() => applyFilters(records, filters), [records, filters]);
-  const filteredIgnoringDate = useMemo(() => applyFilters(records, filters, { ignoreDate: true }), [records, filters]);
+  // The report covers real sales only (שיחלוף מוצר / רכישת מוצר חדש); agent
+  // appointments and other administrative process types are excluded from
+  // every figure below and shown as their own separate line instead.
+  const coreRecords = useMemo(() => records.filter((r) => r.processType && CORE_PROCESS_TYPES.includes(r.processType)), [records]);
+  const agentAppointmentRecords = useMemo(
+    () => records.filter((r) => r.processType && AGENT_APPOINTMENT_PROCESS_TYPES.includes(r.processType)),
+    [records],
+  );
 
-  const repColorScale = useMemo(() => buildColorScale(groupByField(records, "rep")), [records]);
-  const insurerColorScale = useMemo(() => buildColorScale(groupByField(records, "insurer")), [records]);
+  const filtered = useMemo(() => applyFilters(coreRecords, filters), [coreRecords, filters]);
+  const filteredIgnoringDate = useMemo(() => applyFilters(coreRecords, filters, { ignoreDate: true }), [coreRecords, filters]);
+  const agentAppointmentFiltered = useMemo(
+    () => applyFilters(agentAppointmentRecords, { ...filters, processTypes: [] }),
+    [agentAppointmentRecords, filters],
+  );
+
+  const repColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "rep")), [coreRecords]);
+  const insurerColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "insurer")), [coreRecords]);
 
   return (
     <div className="min-h-screen">
@@ -43,10 +58,11 @@ export default function App() {
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-          <FilterBar allRecords={records} filters={filters} onChange={setFilters} />
+          <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
         </div>
 
         <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
+        <AgentAppointmentBanner records={agentAppointmentFiltered} />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <MonthlyTrendChart records={filteredIgnoringDate} />
