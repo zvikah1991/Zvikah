@@ -1,4 +1,4 @@
-import type { Filters, SalesRecord, StatusBucket } from "../types";
+import type { Filters, SalesRecord } from "../types";
 import { monthKeyOf } from "./format";
 
 export function applyFilters(records: SalesRecord[], filters: Filters, opts?: { ignoreDate?: boolean }): SalesRecord[] {
@@ -176,74 +176,41 @@ export function monthOverMonth(records: SalesRecord[]): MonthOverMonth | null {
   };
 }
 
-export interface ProcessTypeStatusPoint {
+export interface ProcessTypeStatusBreakdownRow {
   key: string;
-  good: number;
-  warning: number;
-  critical: number;
-  goodPremium: number;
-  warningPremium: number;
-  criticalPremium: number;
   total: number;
   totalPremium: number;
+  counts: Record<string, number>;
+  premiums: Record<string, number>;
 }
 
-const EMPTY_PROCESS_TYPE_POINT: Omit<ProcessTypeStatusPoint, "key"> = {
-  good: 0,
-  warning: 0,
-  critical: 0,
-  goodPremium: 0,
-  warningPremium: 0,
-  criticalPremium: 0,
-  total: 0,
-  totalPremium: 0,
-};
+/** For a fixed list of process types, breaks each down by its real (unbucketed) status values. */
+export function statusBreakdownForProcessTypes(
+  records: SalesRecord[],
+  processTypes: string[],
+): { rows: ProcessTypeStatusBreakdownRow[]; statuses: string[] } {
+  const rowByType = new Map<string, ProcessTypeStatusBreakdownRow>();
+  for (const pt of processTypes) rowByType.set(pt, { key: pt, total: 0, totalPremium: 0, counts: {}, premiums: {} });
 
-/** For each process type (e.g. "שיחלוף מוצר"), counts + sums premium per status bucket. */
-export function statusByProcessType(records: SalesRecord[], bucketOf: (status: string | null) => StatusBucket): ProcessTypeStatusPoint[] {
-  const map = new Map<string, ProcessTypeStatusPoint>();
+  const statusTotals = new Map<string, number>();
+
   for (const r of records) {
-    const key = r.processType ?? "לא צוין";
-    const point = map.get(key) ?? { key, ...EMPTY_PROCESS_TYPE_POINT };
-    const bucket = bucketOf(r.status);
+    if (!r.processType || !rowByType.has(r.processType)) continue;
+    const row = rowByType.get(r.processType)!;
+    const status = r.status ?? "לא צוין";
     const premium = r.expectedPremium ?? 0;
-    if (bucket === "good") {
-      point.good += 1;
-      point.goodPremium += premium;
-    } else if (bucket === "critical") {
-      point.critical += 1;
-      point.criticalPremium += premium;
-    } else {
-      point.warning += 1;
-      point.warningPremium += premium;
-    }
-    point.total += 1;
-    point.totalPremium += premium;
-    map.set(key, point);
+    row.counts[status] = (row.counts[status] ?? 0) + 1;
+    row.premiums[status] = (row.premiums[status] ?? 0) + premium;
+    row.total += 1;
+    row.totalPremium += premium;
+    statusTotals.set(status, (statusTotals.get(status) ?? 0) + 1);
   }
-  return Array.from(map.values()).sort((a, b) => b.totalPremium - a.totalPremium);
-}
 
-/** Keeps the top N process types by premium, folding the remainder into "Other". */
-export function topNProcessTypesWithOther(points: ProcessTypeStatusPoint[], n: number): ProcessTypeStatusPoint[] {
-  if (points.length <= n) return points;
-  const head = points.slice(0, n);
-  const tail = points.slice(n);
-  const other = tail.reduce<ProcessTypeStatusPoint>(
-    (acc, p) => ({
-      key: OTHER_LABEL,
-      good: acc.good + p.good,
-      warning: acc.warning + p.warning,
-      critical: acc.critical + p.critical,
-      goodPremium: acc.goodPremium + p.goodPremium,
-      warningPremium: acc.warningPremium + p.warningPremium,
-      criticalPremium: acc.criticalPremium + p.criticalPremium,
-      total: acc.total + p.total,
-      totalPremium: acc.totalPremium + p.totalPremium,
-    }),
-    { key: OTHER_LABEL, ...EMPTY_PROCESS_TYPE_POINT },
-  );
-  return [...head, other];
+  const statuses = Array.from(statusTotals.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([status]) => status);
+
+  return { rows: processTypes.map((pt) => rowByType.get(pt)!), statuses };
 }
 
 export function distinctSorted(records: SalesRecord[], field: "rep" | "status" | "processType" | "insurer" | "productType"): string[] {

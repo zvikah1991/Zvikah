@@ -8,7 +8,7 @@ import { Header } from "./components/Header";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
 import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
-import { RepBarChart } from "./components/charts/RepBarChart";
+import { RepByMonthChart } from "./components/charts/RepByMonthChart";
 import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
 import { RankedBarChart } from "./components/charts/RankedBarChart";
 import { RecentClosedList } from "./components/RecentClosedList";
@@ -50,7 +50,7 @@ export default function App() {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <MonthlyTrendChart records={filteredIgnoringDate} />
-          <RepBarChart records={filtered} colorScale={repColorScale} />
+          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} />
           <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} />
           <ProcessTypeStatusChart records={filtered} />
         </div>

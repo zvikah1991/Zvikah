@@ -1,94 +1,58 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { SalesRecord } from "../../types";
-import { statusByProcessType, topNProcessTypesWithOther } from "../../lib/aggregations";
-import { statusBucket, STATUS_BUCKET_COLOR_VAR, STATUS_BUCKET_LABEL } from "../../lib/statusBuckets";
-import { formatCurrencyCompact, formatNumber } from "../../lib/format";
-import { ChartCard, MetricToggle } from "./ChartCard";
+import { statusBreakdownForProcessTypes } from "../../lib/aggregations";
+import { buildColorScale, colorFor } from "../../lib/colorScale";
+import { formatNumber } from "../../lib/format";
+import { ChartCard } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
-function StatusLegend() {
-  const items: Array<{ key: keyof typeof STATUS_BUCKET_LABEL }> = [{ key: "good" }, { key: "warning" }, { key: "critical" }];
-  return (
-    <ul className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)]">
-      {items.map((item) => (
-        <li key={item.key} className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: STATUS_BUCKET_COLOR_VAR[item.key] }} />
-          {STATUS_BUCKET_LABEL[item.key]}
-        </li>
-      ))}
-    </ul>
-  );
-}
+const PROCESS_TYPES = ["שיחלוף מוצר", "רכישת מוצר חדש"];
 
 export function ProcessTypeStatusChart({ records }: { records: SalesRecord[] }) {
-  const [metric, setMetric] = useState<"premium" | "count">("count");
+  const { rows, statuses } = useMemo(() => statusBreakdownForProcessTypes(records, PROCESS_TYPES), [records]);
 
-  const data = useMemo(() => topNProcessTypesWithOther(statusByProcessType(records, statusBucket), 8), [records]);
+  const colorScale = useMemo(() => buildColorScale(statuses.map((s) => ({ key: s, premium: 0, count: 0 }))), [statuses]);
 
-  const goodKey = metric === "premium" ? "goodPremium" : "good";
-  const warningKey = metric === "premium" ? "warningPremium" : "warning";
-  const criticalKey = metric === "premium" ? "criticalPremium" : "critical";
-
-  const tableRows = data.map((d) => ({
-    key: d.key,
-    value:
-      metric === "premium"
-        ? `${formatCurrencyCompact(d.totalPremium)} (${formatCurrencyCompact(d.goodPremium)} הופק · ${formatCurrencyCompact(d.warningPremium)} בטיפול · ${formatCurrencyCompact(d.criticalPremium)} בוטל)`
-        : `${formatNumber(d.total)} (${formatNumber(d.good)} הופק · ${formatNumber(d.warning)} בטיפול · ${formatNumber(d.critical)} בוטל)`,
+  const tableRows = rows.map((row) => ({
+    key: row.key,
+    value: statuses
+      .filter((s) => row.counts[s])
+      .map((s) => `${s} ${formatNumber(row.counts[s])}`)
+      .join(" · ") || "אין נתונים",
   }));
 
-  const height = Math.max(200, data.length * 42);
-  const fmt = (v: number) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v));
+  const chartData = rows.map((row) => ({ key: row.key, ...row.counts }));
+  const height = Math.max(160, rows.length * 90);
 
   return (
     <ChartCard
-      title="מכירות וסטטוסים לפי סוג תהליך"
-      subtitle="שיחלוף מוצר מול רכישת מוצר חדש ועוד — עם פילוח הצלחה"
-      toggle={<MetricToggle metric={metric} onChange={setMetric} />}
+      title="שיחלוף מוצר ורכישת מוצר חדש — לפי סטטוס"
+      subtitle="מספר עסקאות בכל סטטוס, לכל אחד משני סוגי התהליך"
       tableRows={tableRows}
       className="col-span-2"
       chart={
         <div dir="ltr" style={{ height }}>
-          {data.length === 0 ? (
+          {rows.every((r) => r.total === 0) ? (
             <div className="grid h-full place-items-center text-sm text-[var(--text-muted)]">אין נתונים להצגה</div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 4, bottom: 4 }}>
-                <XAxis
-                  type="number"
-                  tickFormatter={fmt}
-                  allowDecimals={metric !== "premium" ? false : undefined}
-                  tick={{ fill: "var(--text-muted)", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis type="category" dataKey="key" tick={{ fill: "var(--text-primary)", fontSize: 12 }} axisLine={false} tickLine={false} width={150} />
-                <Tooltip cursor={{ fill: "var(--surface-2)" }} content={<ChartTooltip formatter={(item) => fmt(Number(item.value))} />} />
-                <Legend content={<StatusLegend />} />
-                <Bar
-                  dataKey={goodKey}
-                  name={STATUS_BUCKET_LABEL.good}
-                  stackId="status"
-                  fill={STATUS_BUCKET_COLOR_VAR.good}
-                  radius={[0, 0, 0, 0]}
-                  maxBarSize={20}
-                />
-                <Bar
-                  dataKey={warningKey}
-                  name={STATUS_BUCKET_LABEL.warning}
-                  stackId="status"
-                  fill={STATUS_BUCKET_COLOR_VAR.warning}
-                  maxBarSize={20}
-                />
-                <Bar
-                  dataKey={criticalKey}
-                  name={STATUS_BUCKET_LABEL.critical}
-                  stackId="status"
-                  fill={STATUS_BUCKET_COLOR_VAR.critical}
-                  radius={[0, 4, 4, 0]}
-                  maxBarSize={20}
-                />
+              <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 16, left: 4, bottom: 4 }}>
+                <XAxis type="number" allowDecimals={false} tick={{ fill: "var(--text-muted)", fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="key" tick={{ fill: "var(--text-primary)", fontSize: 12 }} axisLine={false} tickLine={false} width={130} />
+                <Tooltip cursor={{ fill: "var(--surface-2)" }} content={<ChartTooltip formatter={(item) => formatNumber(Number(item.value))} />} />
+                <Legend formatter={(value) => <span style={{ color: "var(--text-secondary)" }}>{value}</span>} wrapperStyle={{ fontSize: 12 }} />
+                {statuses.map((status, i) => (
+                  <Bar
+                    key={status}
+                    dataKey={status}
+                    name={status}
+                    stackId="status"
+                    fill={colorFor(colorScale, status)}
+                    radius={i === statuses.length - 1 ? [0, 4, 4, 0] : i === 0 ? [4, 0, 0, 4] : undefined}
+                    maxBarSize={36}
+                  />
+                ))}
               </BarChart>
             </ResponsiveContainer>
           )}

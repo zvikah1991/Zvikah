@@ -50,7 +50,7 @@ export function parseISODate(iso: string): Date | null {
 }
 
 const monthFormatter = new Intl.DateTimeFormat("he-IL", { month: "long", year: "numeric" });
-const monthShortFormatter = new Intl.DateTimeFormat("he-IL", { month: "short" });
+const monthShortFormatter = new Intl.DateTimeFormat("he-IL", { month: "long", year: "2-digit" });
 
 /** yyyy-mm -> "אוגוסט 2026" */
 export function formatMonthKey(monthKey: string): string {
@@ -59,7 +59,7 @@ export function formatMonthKey(monthKey: string): string {
   return monthFormatter.format(new Date(y, m - 1, 1));
 }
 
-/** yyyy-mm -> "אוג׳" */
+/** yyyy-mm -> "אוגוסט 26" — always includes the year, since the same month name can repeat across years. */
 export function formatMonthKeyShort(monthKey: string): string {
   const [y, m] = monthKey.split("-").map(Number);
   if (!y || !m) return "—";
