@@ -116,3 +116,12 @@ export function IconTrash({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconTrendingUp({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M3 16l6-6 4 4 8-8" />
+      <path d="M15 6h6v6" />
+    </svg>
+  );
+}

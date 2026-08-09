@@ -176,6 +176,44 @@ export function monthOverMonth(records: SalesRecord[]): MonthOverMonth | null {
   };
 }
 
+export interface MonthlyPace {
+  monthLabel: string;
+  actualPremium: number;
+  projectedPremium: number;
+  daysElapsed: number;
+  daysInMonth: number;
+  isProjecting: boolean;
+}
+
+/**
+ * Projects the latest month's premium to a full-month equivalent based on
+ * its pace so far (actualPremium / daysElapsed * daysInMonth). For a month
+ * that has already fully passed, daysElapsed equals daysInMonth so the
+ * projection simply equals the actual total.
+ */
+export function monthlyPaceProjection(records: SalesRecord[], today: Date = new Date()): MonthlyPace | null {
+  const trend = monthlyTrend(records);
+  if (trend.length === 0) return null;
+  const current = trend[trend.length - 1];
+  const [y, m] = current.monthKey.split("-").map(Number);
+  const todayY = today.getFullYear();
+  const todayM = today.getMonth() + 1;
+  const daysInMonth = new Date(y, m, 0).getDate();
+
+  if (y > todayY || (y === todayY && m > todayM)) return null;
+  const daysElapsed = y === todayY && m === todayM ? today.getDate() : daysInMonth;
+
+  const rate = daysElapsed > 0 ? current.premium / daysElapsed : 0;
+  return {
+    monthLabel: current.monthKey,
+    actualPremium: current.premium,
+    projectedPremium: rate * daysInMonth,
+    daysElapsed,
+    daysInMonth,
+    isProjecting: daysElapsed < daysInMonth,
+  };
+}
+
 export interface ProcessTypeStatusBreakdownRow {
   key: string;
   total: number;
