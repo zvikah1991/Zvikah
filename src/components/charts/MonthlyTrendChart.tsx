@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { SalesRecord } from "../../types";
 import { monthlyTrend } from "../../lib/aggregations";
-import { formatCurrencyCompact, formatMonthKey, formatMonthKeyShort, formatNumber } from "../../lib/format";
+import { formatCurrency, formatMonthKey, formatMonthKeyShort, formatNumber } from "../../lib/format";
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -29,7 +29,7 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
     .reverse()
     .map((p) => ({
       key: formatMonthKey(p.monthKey),
-      value: metric === "premium" ? formatCurrencyCompact(p.premium) : formatNumber(p.count),
+      value: metric === "premium" ? formatCurrency(p.premium) : formatNumber(p.count),
     }));
 
   return (
@@ -71,18 +71,18 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
                   tickLine={false}
                 />
                 <YAxis
-                  tickFormatter={(v) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v))}
+                  tickFormatter={(v) => (metric === "premium" ? formatCurrency(v) : formatNumber(v))}
                   allowDecimals={metric !== "premium" ? false : undefined}
                   tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
-                  width={56}
+                  width={78}
                 />
                 <Tooltip
                   cursor={{ fill: "var(--surface-2)" }}
                   content={
                     <ChartTooltip
-                      formatter={(item) => (metric === "premium" ? formatCurrencyCompact(Number(item.value)) : formatNumber(Number(item.value)))}
+                      formatter={(item) => (metric === "premium" ? formatCurrency(Number(item.value)) : formatNumber(Number(item.value)))}
                     />
                   }
                   labelFormatter={(label) => formatMonthKey(String(label))}

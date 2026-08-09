@@ -3,7 +3,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import type { SalesRecord } from "../../types";
 import { groupByField } from "../../lib/aggregations";
 import { colorFor } from "../../lib/colorScale";
-import { formatCurrencyCompact, formatMonthKeyShort, formatNumber, monthKeyOf } from "../../lib/format";
+import { formatCurrency, formatMonthKeyShort, formatNumber, monthKeyOf } from "../../lib/format";
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -27,11 +27,11 @@ export function RepByMonthChart({ records, colorScale }: { records: SalesRecord[
 
   const tableRows = data.map((d) => ({
     key: d.key,
-    value: metric === "premium" ? formatCurrencyCompact(d.premium) : formatNumber(d.count),
+    value: metric === "premium" ? formatCurrency(d.premium) : formatNumber(d.count),
   }));
 
   const height = Math.max(180, data.length * 40);
-  const fmt = (v: number) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v));
+  const fmt = (v: number) => (metric === "premium" ? formatCurrency(v) : formatNumber(v));
 
   return (
     <ChartCard

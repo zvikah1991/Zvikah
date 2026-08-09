@@ -3,7 +3,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import type { SalesRecord } from "../../types";
 import { groupByField, topNWithOther } from "../../lib/aggregations";
 import { colorFor } from "../../lib/colorScale";
-import { formatCurrencyCompact, formatNumber } from "../../lib/format";
+import { formatCurrency, formatNumber } from "../../lib/format";
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -30,7 +30,7 @@ export function RankedBarChart({
 
   const tableRows = data.map((d) => ({
     key: d.key,
-    value: metric === "premium" ? formatCurrencyCompact(d.premium) : formatNumber(d.count),
+    value: metric === "premium" ? formatCurrency(d.premium) : formatNumber(d.count),
   }));
 
   const height = Math.max(180, data.length * 36);
@@ -50,7 +50,7 @@ export function RankedBarChart({
               <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 4, bottom: 4 }}>
                 <XAxis
                   type="number"
-                  tickFormatter={(v) => (metric === "premium" ? formatCurrencyCompact(v) : formatNumber(v))}
+                  tickFormatter={(v) => (metric === "premium" ? formatCurrency(v) : formatNumber(v))}
                   allowDecimals={metric !== "premium" ? false : undefined}
                   tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                   axisLine={false}
@@ -68,7 +68,7 @@ export function RankedBarChart({
                   cursor={{ fill: "var(--surface-2)" }}
                   content={
                     <ChartTooltip
-                      formatter={(item) => (metric === "premium" ? formatCurrencyCompact(Number(item.value)) : formatNumber(Number(item.value)))}
+                      formatter={(item) => (metric === "premium" ? formatCurrency(Number(item.value)) : formatNumber(Number(item.value)))}
                     />
                   }
                 />

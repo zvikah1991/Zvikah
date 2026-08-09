@@ -4,30 +4,14 @@ const currencyFormatter = new Intl.NumberFormat("he-IL", {
   maximumFractionDigits: 0,
 });
 
-const compactCurrencyFormatter = new Intl.NumberFormat("he-IL", {
-  style: "currency",
-  currency: "ILS",
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-
 const numberFormatter = new Intl.NumberFormat("he-IL");
-const compactNumberFormatter = new Intl.NumberFormat("he-IL", { notation: "compact", maximumFractionDigits: 1 });
 
 export function formatCurrency(value: number): string {
   return currencyFormatter.format(value);
 }
 
-export function formatCurrencyCompact(value: number): string {
-  return compactCurrencyFormatter.format(value);
-}
-
 export function formatNumber(value: number): string {
   return numberFormatter.format(value);
-}
-
-export function formatNumberCompact(value: number): string {
-  return compactNumberFormatter.format(value);
 }
 
 export function formatPercent(value: number, digits = 0): string {
