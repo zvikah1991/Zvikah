@@ -69,17 +69,6 @@ export function FilterBar({
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
-          <button
-            type="button"
-            onClick={() => {
-              onChange({ ...filters, dateFrom: null, dateTo: null });
-              setCustomOpen(false);
-            }}
-            className={pillClass(mode === "all")}
-          >
-            כל הזמנים
-          </button>
-
           <select
             value={mode === "month" ? activeMonth : ""}
             onChange={(e) => {
