@@ -8,7 +8,7 @@ import { CORE_PROCESS_TYPES } from "../../config";
 import { ChartCard } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
-export function ProcessTypeStatusChart({ records }: { records: SalesRecord[] }) {
+export function ProcessTypeStatusChart({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const { rows, statuses } = useMemo(() => statusBreakdownForProcessTypes(records, CORE_PROCESS_TYPES), [records]);
 
   const colorScale = useMemo(() => buildColorScale(statuses.map((s) => ({ key: s, premium: 0, count: 0 }))), [statuses]);
@@ -30,6 +30,7 @@ export function ProcessTypeStatusChart({ records }: { records: SalesRecord[] }) 
       subtitle="מספר עסקאות בכל סטטוס, לכל אחד משני סוגי התהליך"
       tableRows={tableRows}
       className="col-span-2"
+      delayMs={delayMs}
       chart={
         <div dir="ltr" style={{ height }}>
           {rows.every((r) => r.total === 0) ? (
@@ -50,6 +51,9 @@ export function ProcessTypeStatusChart({ records }: { records: SalesRecord[] }) 
                     fill={colorFor(colorScale, status)}
                     radius={i === statuses.length - 1 ? [0, 4, 4, 0] : i === 0 ? [4, 0, 0, 4] : undefined}
                     maxBarSize={36}
+                    animationBegin={(delayMs ?? 0) + 150 + i * 90}
+                    animationDuration={500}
+                    animationEasing="ease-out"
                   />
                 ))}
               </BarChart>

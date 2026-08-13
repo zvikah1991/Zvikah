@@ -10,6 +10,8 @@ export function StatTile({
   delta,
   icon,
   className,
+  delayMs,
+  progress,
 }: {
   label: string;
   value: string;
@@ -18,6 +20,10 @@ export function StatTile({
   delta?: { pct: number | null; positiveIsGood?: boolean } | null;
   icon?: ReactNode;
   className?: string;
+  /** Staggers this tile's entrance animation behind the ones before it. */
+  delayMs?: number;
+  /** 0–1: renders a thin animated fill bar under the value (e.g. "days elapsed this month"). */
+  progress?: number;
 }) {
   const accentVar = accent
     ? {
@@ -29,7 +35,7 @@ export function StatTile({
     : "var(--series-1)";
 
   return (
-    <Card className={clsx("animate-fade-up p-4", className)}>
+    <Card className={clsx("animate-fade-up overflow-hidden p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm text-[var(--text-secondary)]">{label}</span>
         {icon && (
@@ -46,6 +52,21 @@ export function StatTile({
         {delta && delta.pct !== null && <DeltaBadge pct={delta.pct} positiveIsGood={delta.positiveIsGood ?? true} />}
       </div>
       {sub && <div className="mt-1 text-xs text-[var(--text-muted)]">{sub}</div>}
+      {progress !== undefined && (
+        <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--surface-2)]" aria-hidden="true">
+          <div
+            className="animate-grow-width h-full rounded-full"
+            style={
+              {
+                width: `${Math.round(Math.min(1, Math.max(0, progress)) * 100)}%`,
+                background: accentVar,
+                animationDelay: delayMs ? `${delayMs + 150}ms` : "150ms",
+                "--grow-to": `${Math.round(Math.min(1, Math.max(0, progress)) * 100)}%`,
+              } as React.CSSProperties
+            }
+          />
+        </div>
+      )}
     </Card>
   );
 }

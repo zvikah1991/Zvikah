@@ -22,7 +22,7 @@ const COLUMNS: { key: SortKey; label: string; align?: "start" | "end" }[] = [
 
 const PAGE_SIZE = 20;
 
-export function DataTable({ records }: { records: SalesRecord[] }) {
+export function DataTable({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const [sortKey, setSortKey] = useState<SortKey>("requiredDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(0);
@@ -57,7 +57,7 @@ export function DataTable({ records }: { records: SalesRecord[] }) {
   };
 
   return (
-    <Card className="animate-fade-up overflow-hidden">
+    <Card className="animate-fade-up overflow-hidden" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] p-4">
         <div>
           <h3 className="text-sm font-semibold">כל העסקאות ({formatNumber(records.length)})</h3>

@@ -3,7 +3,7 @@ import type { SalesRecord } from "../types";
 import { formatCurrency, formatNumber } from "../lib/format";
 import { IconBriefcase } from "./ui/Icons";
 
-export function AgentAppointmentBanner({ records }: { records: SalesRecord[] }) {
+export function AgentAppointmentBanner({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const { count, premium } = useMemo(
     () => ({
       count: records.length,
@@ -13,7 +13,10 @@ export function AgentAppointmentBanner({ records }: { records: SalesRecord[] }) 
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-2)]/60 px-4 py-2.5 text-sm">
+    <div
+      className="animate-fade-up flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-2)]/60 px-4 py-2.5 text-sm"
+      style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}
+    >
       <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[var(--surface)] text-[var(--text-muted)]">
         <IconBriefcase className="h-3.5 w-3.5" />
       </span>

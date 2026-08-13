@@ -33,7 +33,15 @@ function RepMetricToggle({ metric, onChange }: { metric: Metric; onChange: (m: M
   );
 }
 
-export function RepByMonthChart({ records, colorScale }: { records: SalesRecord[]; colorScale: Map<string, string> }) {
+export function RepByMonthChart({
+  records,
+  colorScale,
+  delayMs,
+}: {
+  records: SalesRecord[];
+  colorScale: Map<string, string>;
+  delayMs?: number;
+}) {
   const [metric, setMetric] = useState<Metric>("premium");
 
   const months = useMemo(() => {
@@ -100,6 +108,7 @@ export function RepByMonthChart({ records, colorScale }: { records: SalesRecord[
         </div>
       }
       tableRows={tableRows}
+      delayMs={delayMs}
       chart={
         <div dir="ltr" style={{ height }}>
           {data.length === 0 ? (
@@ -121,7 +130,15 @@ export function RepByMonthChart({ records, colorScale }: { records: SalesRecord[
                 />
                 <YAxis type="category" dataKey="key" tick={{ fill: "var(--text-primary)", fontSize: 12 }} axisLine={false} tickLine={false} width={100} />
                 <Tooltip cursor={{ fill: "var(--surface-2)" }} content={<ChartTooltip formatter={(item) => fmt(Number(item.value))} />} />
-                <Bar dataKey="value" name={metric === "premium" ? "פרמיה" : metric === "count" ? "עסקאות" : "קצב חודשי"} radius={[0, 4, 4, 0]} maxBarSize={22}>
+                <Bar
+                  dataKey="value"
+                  name={metric === "premium" ? "פרמיה" : metric === "count" ? "עסקאות" : "קצב חודשי"}
+                  radius={[0, 4, 4, 0]}
+                  maxBarSize={22}
+                  animationBegin={(delayMs ?? 0) + 150}
+                  animationDuration={700}
+                  animationEasing="ease-out"
+                >
                   {data.map((d) => (
                     <Cell key={d.key} fill={colorFor(colorScale, d.key)} />
                   ))}

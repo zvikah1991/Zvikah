@@ -66,18 +66,18 @@ export default function App() {
         </div>
 
         <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-        <AgentAppointmentBanner records={agentAppointmentFiltered} />
+        <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <MonthlyTrendChart records={filteredIgnoringDate} />
-          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} />
-          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} />
-          <ProcessTypeStatusChart records={filtered} />
+          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={420} />
+          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={460} />
+          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={500} />
+          <ProcessTypeStatusChart records={filtered} delayMs={540} />
         </div>
 
-        <RecentClosedList records={filtered} />
-        <CustomersTable records={filtered} />
-        <DataTable records={filtered} />
+        <RecentClosedList records={filtered} delayMs={600} />
+        <CustomersTable records={filtered} delayMs={640} />
+        <DataTable records={filtered} delayMs={680} />
 
         <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
           הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport

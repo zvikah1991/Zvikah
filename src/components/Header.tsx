@@ -46,7 +46,11 @@ export function Header({
 
         {meta && (
           <div className="flex items-center gap-1.5 rounded-lg bg-[var(--surface-2)] px-2.5 py-1 text-xs text-[var(--text-secondary)]">
-            <span className={`h-1.5 w-1.5 rounded-full ${isUsingSeed ? "bg-[var(--status-warning)]" : "bg-[var(--status-good)]"}`} />
+            <span
+              className={`relative h-1.5 w-1.5 rounded-full ${
+                isUsingSeed ? "bg-[var(--status-warning)] text-[var(--status-warning)]" : "animate-live-dot bg-[var(--status-good)] text-[var(--status-good)]"
+              }`}
+            />
             {isUsingSeed ? "מוצגים נתוני דוגמה" : `עודכן ${relativeUpdatedAt(meta.updatedAt)}`}
           </div>
         )}

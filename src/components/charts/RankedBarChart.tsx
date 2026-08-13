@@ -14,6 +14,7 @@ export function RankedBarChart({
   field,
   colorScale,
   topN = 6,
+  delayMs,
 }: {
   title: string;
   subtitle?: string;
@@ -21,6 +22,7 @@ export function RankedBarChart({
   field: "insurer" | "productType" | "processType";
   colorScale: Map<string, string>;
   topN?: number;
+  delayMs?: number;
 }) {
   const [metric, setMetric] = useState<"premium" | "count">("premium");
   const data = useMemo(() => {
@@ -41,6 +43,7 @@ export function RankedBarChart({
       subtitle={subtitle}
       toggle={<MetricToggle metric={metric} onChange={setMetric} />}
       tableRows={tableRows}
+      delayMs={delayMs}
       chart={
         <div dir="ltr" style={{ height }}>
           {data.length === 0 ? (
@@ -72,7 +75,15 @@ export function RankedBarChart({
                     />
                   }
                 />
-                <Bar dataKey={metric} name={metric === "premium" ? "פרמיה" : "עסקאות"} radius={[0, 4, 4, 0]} maxBarSize={20}>
+                <Bar
+                  dataKey={metric}
+                  name={metric === "premium" ? "פרמיה" : "עסקאות"}
+                  radius={[0, 4, 4, 0]}
+                  maxBarSize={20}
+                  animationBegin={(delayMs ?? 0) + 150}
+                  animationDuration={700}
+                  animationEasing="ease-out"
+                >
                   {data.map((d) => (
                     <Cell key={d.key} fill={colorFor(colorScale, d.key)} />
                   ))}

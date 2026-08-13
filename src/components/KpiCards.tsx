@@ -28,6 +28,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
         icon={<IconCoins />}
         delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
         sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
+        delayMs={0}
       />
       {pace && (
         <StatTile
@@ -42,6 +43,8 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
                 ? `הערכה לפי ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים · ${formatMonthKeyShort(pace.monthLabel)}`
                 : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
           }
+          progress={pace.daysInMonth > 0 ? pace.daysElapsed / pace.daysInMonth : undefined}
+          delayMs={50}
         />
       )}
       <StatTile
@@ -50,23 +53,26 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
         icon={<IconBriefcase />}
         delta={comparison ? { pct: comparison.countDeltaPct } : undefined}
         sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
+        delayMs={100}
       />
-      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} />
-      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} />
+      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={150} />
+      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={200} />
       <StatTile
         label="הופק / הושלם"
         value={formatNumber(kpis.goodCount)}
         icon={<IconCheck />}
         accent="good"
         sub={`${formatPercent(winRate / 100)} אחוז הצלחה`}
+        delayMs={250}
       />
-      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" />
+      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={300} />
       <StatTile
         label="בטיפול"
         value={formatNumber(kpis.warningCount)}
         icon={<IconClock />}
         accent="warning"
         className="col-span-2 sm:col-span-1"
+        delayMs={350}
       />
     </div>
   );

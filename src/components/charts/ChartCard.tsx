@@ -14,6 +14,7 @@ export function ChartCard({
   chart,
   tableRows,
   className,
+  delayMs,
 }: {
   title: string;
   subtitle?: string;
@@ -21,11 +22,12 @@ export function ChartCard({
   chart: ReactNode;
   tableRows: ChartTableRow[];
   className?: string;
+  delayMs?: number;
 }) {
   const [view, setView] = useState<"chart" | "table">("chart");
 
   return (
-    <Card className={clsx("animate-fade-up p-4", className)}>
+    <Card className={clsx("animate-fade-up p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>

@@ -13,7 +13,7 @@ const MONTHS_BACK_OPTIONS = [
   { value: "all", label: "כל התקופה" },
 ];
 
-export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
+export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const [metric, setMetric] = useState<"premium" | "count">("premium");
   const [monthsBack, setMonthsBack] = useState<string>("12");
   const fullTrend = useMemo(() => monthlyTrend(records), [records]);
@@ -54,6 +54,7 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
       }
       tableRows={tableRows}
       className="col-span-2"
+      delayMs={delayMs}
       chart={
         <div dir="ltr" className="h-64">
           {trend.length === 0 ? (
@@ -87,7 +88,16 @@ export function MonthlyTrendChart({ records }: { records: SalesRecord[] }) {
                   }
                   labelFormatter={(label) => formatMonthKey(String(label))}
                 />
-                <Bar dataKey={metric} name={metric === "premium" ? "פרמיה" : "עסקאות"} fill="var(--series-1)" radius={[4, 4, 0, 0]} maxBarSize={44} />
+                <Bar
+                  dataKey={metric}
+                  name={metric === "premium" ? "פרמיה" : "עסקאות"}
+                  fill="var(--series-1)"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={44}
+                  animationBegin={(delayMs ?? 0) + 150}
+                  animationDuration={700}
+                  animationEasing="ease-out"
+                />
               </BarChart>
             </ResponsiveContainer>
           )}

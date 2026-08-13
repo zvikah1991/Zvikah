@@ -122,10 +122,6 @@ body {
   }
 }
 
-.animate-fade-up {
-  animation: fade-up 0.45s ease both;
-}
-
 @keyframes shimmer {
   0% {
     background-position: -400px 0;
@@ -139,6 +135,65 @@ body {
   background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface) 37%, var(--surface-2) 63%);
   background-size: 800px 100%;
   animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes grow-width {
+  from {
+    width: 0%;
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, currentColor 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 6px color-mix(in oklab, currentColor 0%, transparent);
+  }
+}
+
+/* Motion is opt-out, not opt-in: everyone gets it unless they've asked the OS not to. */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-up {
+    animation: fade-up 0.45s ease both;
+  }
+
+  .animate-grow-width {
+    animation: grow-width 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-live-dot {
+    animation: soft-pulse 2.2s ease-in-out infinite;
+  }
+
+  .animate-live-dot::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-grow-width {
+    width: var(--grow-to, 100%);
+  }
 }
 
 .tabular-nums {

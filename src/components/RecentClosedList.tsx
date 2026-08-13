@@ -6,17 +6,21 @@ import { formatCurrency, formatDate } from "../lib/format";
 import { Card } from "./ui/Card";
 import { IconCheck } from "./ui/Icons";
 
-export function RecentClosedList({ records }: { records: SalesRecord[] }) {
+export function RecentClosedList({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const deals = useMemo(() => recentClosedDeals(records, statusBucket, 10), [records]);
 
   return (
-    <Card className="animate-fade-up p-4">
+    <Card className="animate-fade-up p-4" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <h3 className="text-sm font-semibold">לקוחות שנסגרו לאחרונה</h3>
       <p className="text-xs text-[var(--text-muted)]">10 העסקאות האחרונות שהופקו / הושלמו</p>
 
       <ul className="mt-3 flex flex-col gap-1">
-        {deals.map((r) => (
-          <li key={r.id} className="flex items-center gap-3 rounded-lg px-1.5 py-2 hover:bg-[var(--surface-2)]/60">
+        {deals.map((r, i) => (
+          <li
+            key={r.id}
+            className="animate-fade-up flex items-center gap-3 rounded-lg px-1.5 py-2 hover:bg-[var(--surface-2)]/60"
+            style={{ animationDelay: `${(delayMs ?? 0) + 120 + i * 45}ms` }}
+          >
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color-mix(in_oklab,var(--status-good)_16%,transparent)] text-[var(--status-good)]">
               <IconCheck className="h-4 w-4" />
             </span>

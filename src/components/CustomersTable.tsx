@@ -19,7 +19,7 @@ const COLUMNS: { key: SortKey; label: string; align?: "start" | "end" }[] = [
 
 const PAGE_SIZE = 15;
 
-export function CustomersTable({ records }: { records: SalesRecord[] }) {
+export function CustomersTable({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const customers = useMemo(() => summarizeCustomers(records, statusBucket), [records]);
   const [sortKey, setSortKey] = useState<SortKey>("lastDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -55,7 +55,7 @@ export function CustomersTable({ records }: { records: SalesRecord[] }) {
   };
 
   return (
-    <Card className="animate-fade-up overflow-hidden">
+    <Card className="animate-fade-up overflow-hidden" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] p-4">
         <div>
           <h3 className="text-sm font-semibold">כל הלקוחות ({formatNumber(customers.length)})</h3>
