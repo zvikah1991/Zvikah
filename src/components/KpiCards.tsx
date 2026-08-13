@@ -22,14 +22,6 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
-      <StatTile
-        label="פרמיה נוכחית"
-        value={formatCurrency(premium)}
-        icon={<IconCoins />}
-        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
-        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
-        delayMs={0}
-      />
       {pace && (
         <StatTile
           label="פרמיה צפויה לפי קצב החודש"
@@ -44,9 +36,17 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
                 : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
           }
           progress={pace.daysInMonth > 0 ? pace.daysElapsed / pace.daysInMonth : undefined}
-          delayMs={50}
+          delayMs={0}
         />
       )}
+      <StatTile
+        label="פרמיה נוכחית"
+        value={formatCurrency(premium)}
+        icon={<IconCoins />}
+        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
+        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
+        delayMs={50}
+      />
       <StatTile
         label="עסקאות"
         value={formatNumber(Math.round(deals))}
