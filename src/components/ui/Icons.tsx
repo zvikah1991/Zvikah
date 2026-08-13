@@ -125,3 +125,25 @@ export function IconTrendingUp({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconGripDots({ className }: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" className={className} fill="currentColor">
+      <circle cx="8" cy="6" r="1.6" />
+      <circle cx="16" cy="6" r="1.6" />
+      <circle cx="8" cy="12" r="1.6" />
+      <circle cx="16" cy="12" r="1.6" />
+      <circle cx="8" cy="18" r="1.6" />
+      <circle cx="16" cy="18" r="1.6" />
+    </svg>
+  );
+}
+
+export function IconRotateCcw({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+    </svg>
+  );
+}
