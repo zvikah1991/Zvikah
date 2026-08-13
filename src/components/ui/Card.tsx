@@ -12,11 +12,7 @@ export function Card({
 }) {
   return (
     <div
-      className={clsx(
-        "rounded-2xl border bg-[var(--surface)] border-[var(--border)] shadow-sm",
-        "shadow-black/[0.03]",
-        className,
-      )}
+      className={clsx("relative rounded-2xl border bg-[var(--surface)] border-[var(--border)]", "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.12)]", className)}
       style={style}
     >
       {children}

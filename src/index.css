@@ -1,7 +1,17 @@
 @import "tailwindcss";
+@import "@fontsource/heebo/300.css";
+@import "@fontsource/heebo/400.css";
+@import "@fontsource/heebo/500.css";
+@import "@fontsource/heebo/600.css";
+@import "@fontsource/heebo/700.css";
+@import "@fontsource/heebo/800.css";
+@import "@fontsource/frank-ruhl-libre/500.css";
+@import "@fontsource/frank-ruhl-libre/600.css";
+@import "@fontsource/frank-ruhl-libre/700.css";
 
 @theme {
-  --font-sans: system-ui, -apple-system, "Segoe UI", "Heebo", "Arial Hebrew", Arial, sans-serif;
+  --font-sans: "Heebo", system-ui, -apple-system, "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+  --font-serif: "Frank Ruhl Libre", "Times New Roman", Georgia, serif;
 }
 
 :root {
@@ -16,6 +26,14 @@
   --grid: #e1e0d9;
   --baseline: #c3c2b7;
   --border: rgba(11, 11, 11, 0.1);
+
+  /* Chrome/brand accent — distinct from the chart series palette below, so
+     UI affordances (buttons, focus, active states) can carry a signature
+     identity without touching the accessibility-validated data colors. */
+  --brand: #22315f;
+  --brand-soft: #4a5a94;
+  --brand-gold: #a9812f;
+  --brand-gold-soft: #cbaa5c;
 
   --series-1: #2a78d6; /* blue */
   --series-2: #eb6834; /* orange */
@@ -47,6 +65,11 @@
     --baseline: #383835;
     --border: rgba(255, 255, 255, 0.1);
 
+    --brand: #5468b8;
+    --brand-soft: #8393dd;
+    --brand-gold: #d4ac54;
+    --brand-gold-soft: #e8cf94;
+
     --series-1: #3987e5;
     --series-2: #d95926;
     --series-3: #199e70;
@@ -71,6 +94,11 @@
   --grid: #2c2c2a;
   --baseline: #383835;
   --border: rgba(255, 255, 255, 0.1);
+
+  --brand: #5468b8;
+  --brand-soft: #8393dd;
+  --brand-gold: #d4ac54;
+  --brand-gold-soft: #e8cf94;
 
   --series-1: #3987e5;
   --series-2: #d95926;

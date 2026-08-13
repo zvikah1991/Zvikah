@@ -44,12 +44,12 @@ export function MultiSelect({
         className={clsx(
           "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors",
           "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)]",
-          selected.length > 0 && "border-[var(--series-1)]/50",
+          selected.length > 0 && "border-[var(--brand)]/50",
         )}
       >
         <span className="text-[var(--text-secondary)]">{label}</span>
         {selected.length > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--series-1)] px-1 text-xs font-semibold text-white tabular-nums">
+          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--brand)] px-1 text-xs font-semibold text-white tabular-nums">
             {selected.length}
           </span>
         )}
@@ -72,7 +72,7 @@ export function MultiSelect({
                   type="checkbox"
                   checked={checked}
                   onChange={() => toggle(opt)}
-                  className="h-3.5 w-3.5 accent-[var(--series-1)]"
+                  className="h-3.5 w-3.5 accent-[var(--brand)]"
                 />
                 <span className="truncate">{opt}</span>
               </label>

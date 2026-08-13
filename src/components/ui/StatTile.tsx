@@ -30,12 +30,17 @@ export function StatTile({
         good: "var(--status-good)",
         warning: "var(--status-warning)",
         critical: "var(--status-critical)",
-        neutral: "var(--series-1)",
+        neutral: "var(--brand)",
       }[accent]
-    : "var(--series-1)";
+    : "var(--brand)";
 
   return (
     <Card className={clsx("animate-fade-up overflow-hidden p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
+      <div
+        className="absolute inset-x-0 top-0 h-[2px]"
+        style={{ background: "linear-gradient(90deg, transparent, var(--brand-gold-soft), transparent)" }}
+        aria-hidden="true"
+      />
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm text-[var(--text-secondary)]">{label}</span>
         {icon && (

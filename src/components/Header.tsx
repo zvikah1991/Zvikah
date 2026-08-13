@@ -26,16 +26,24 @@ export function Header({
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--page)]/85 backdrop-blur">
+      <div
+        className="h-[2px]"
+        style={{ background: "linear-gradient(90deg, transparent, var(--brand-gold), transparent)" }}
+        aria-hidden="true"
+      />
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2.5">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[var(--series-1)] to-[var(--series-3)] text-white shadow-sm">
+          <div
+            className="grid h-9 w-9 place-items-center rounded-xl text-white shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_var(--brand-gold-soft)]"
+            style={{ background: "linear-gradient(135deg, var(--brand), var(--brand-soft))" }}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 17l6-6 4 4 7-8" />
               <path d="M14 6h7v7" />
             </svg>
           </div>
           <div className="leading-tight">
-            <h1 className="text-base font-bold">{APP_TITLE}</h1>
+            <h1 className="font-serif text-lg font-semibold tracking-tight">{APP_TITLE}</h1>
             <p className="text-xs text-[var(--text-muted)]">
               {AGENCY_NAME} · {APP_SUBTITLE}
             </p>
@@ -91,7 +99,7 @@ export function Header({
             type="button"
             disabled={isUploading}
             onClick={() => inputRef.current?.click()}
-            className="flex items-center gap-1.5 rounded-lg bg-[var(--series-1)] px-3 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-1.5 rounded-lg bg-[var(--brand)] px-3 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             <IconUpload className="h-4 w-4" />
             {isUploading ? "מעלה…" : "עדכון דו״ח יומי"}
