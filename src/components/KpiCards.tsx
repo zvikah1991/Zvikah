@@ -40,37 +40,37 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
         />
       )}
       <StatTile
-        label="פרמיה נוכחית"
-        value={formatCurrency(premium)}
-        icon={<IconCoins />}
-        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
-        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
-        delayMs={50}
-      />
-      <StatTile
         label="עסקאות"
         value={formatNumber(Math.round(deals))}
         icon={<IconBriefcase />}
         delta={comparison ? { pct: comparison.countDeltaPct } : undefined}
         sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
-        delayMs={100}
+        delayMs={50}
       />
-      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={150} />
-      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={200} />
+      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={100} />
+      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={150} />
       <StatTile
         label="הופק / הושלם"
         value={formatNumber(kpis.goodCount)}
         icon={<IconCheck />}
         accent="good"
         sub={`${formatPercent(winRate / 100)} אחוז הצלחה`}
-        delayMs={250}
+        delayMs={200}
       />
-      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={300} />
+      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={250} />
       <StatTile
         label="בטיפול"
         value={formatNumber(kpis.warningCount)}
         icon={<IconClock />}
         accent="warning"
+        delayMs={300}
+      />
+      <StatTile
+        label="פרמיה נוכחית"
+        value={formatCurrency(premium)}
+        icon={<IconCoins />}
+        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
+        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
         className="col-span-2 sm:col-span-1"
         delayMs={350}
       />
