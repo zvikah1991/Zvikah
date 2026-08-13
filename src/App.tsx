@@ -4,6 +4,7 @@ import { useSalesData } from "./hooks/useSalesData";
 import { useTheme } from "./hooks/useTheme";
 import { applyFilters, groupByField } from "./lib/aggregations";
 import { buildColorScale } from "./lib/colorScale";
+import { currentMonthKey, monthRangeISO } from "./lib/format";
 import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
 import { Header } from "./components/Header";
 import { FilterBar } from "./components/FilterBar";
@@ -21,7 +22,10 @@ import { ErrorBanner } from "./components/ui/ErrorBanner";
 export default function App() {
   const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
   const { theme, toggle } = useTheme();
-  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [filters, setFilters] = useState<Filters>(() => {
+    const { from, to } = monthRangeISO(currentMonthKey());
+    return { ...EMPTY_FILTERS, dateFrom: from, dateTo: to };
+  });
 
   // The report covers real sales only (שיחלוף מוצר / רכישת מוצר חדש); agent
   // appointments and other administrative process types are excluded from

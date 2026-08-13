@@ -58,6 +58,10 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+export function currentMonthKey(today: Date = new Date()): string {
+  return `${today.getFullYear()}-${pad2(today.getMonth() + 1)}`;
+}
+
 /** yyyy-mm -> the first/last ISO date of that calendar month. */
 export function monthRangeISO(monthKey: string): { from: string; to: string } {
   const [y, m] = monthKey.split("-").map(Number);

@@ -5,7 +5,7 @@ import { statusBucket } from "../lib/statusBuckets";
 import { formatCurrency, formatMonthKeyShort, formatNumber, formatPercent } from "../lib/format";
 import { useCountUp } from "../hooks/useCountUp";
 import { StatTile } from "./ui/StatTile";
-import { IconBriefcase, IconCheck, IconClock, IconCoins, IconTarget, IconTrendingUp, IconUsers, IconX } from "./ui/Icons";
+import { IconBriefcase, IconCheck, IconClock, IconTarget, IconTrendingUp, IconUsers, IconX } from "./ui/Icons";
 
 export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRecord[]; filteredIgnoringDate: SalesRecord[] }) {
   const kpis = useMemo(() => computeKpis(filtered, statusBucket), [filtered]);
@@ -13,7 +13,6 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const comparison = mom && mom.previousLabel ? mom : null;
   const pace = useMemo(() => monthlyPaceProjection(filteredIgnoringDate), [filteredIgnoringDate]);
 
-  const premium = useCountUp(kpis.totalPremium);
   const deals = useCountUp(kpis.totalDeals);
   const avg = useCountUp(kpis.avgPremium);
   const customers = useCountUp(kpis.distinctCustomers);
@@ -21,14 +20,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const projected = useCountUp(pace?.projectedPremium ?? 0);
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
-      <StatTile
-        label="סה״כ פרמיה צפויה"
-        value={formatCurrency(premium)}
-        icon={<IconCoins />}
-        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
-        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
-      />
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
       {pace && (
         <StatTile
           label="פרמיה צפויה לפי קצב החודש"
