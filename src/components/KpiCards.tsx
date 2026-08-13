@@ -22,6 +22,32 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
+      <StatTile
+        label="עסקאות"
+        value={formatNumber(Math.round(deals))}
+        icon={<IconBriefcase />}
+        delta={comparison ? { pct: comparison.countDeltaPct } : undefined}
+        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
+        delayMs={0}
+      />
+      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={50} />
+      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={100} />
+      <StatTile
+        label="הופק / הושלם"
+        value={formatNumber(kpis.goodCount)}
+        icon={<IconCheck />}
+        accent="good"
+        sub={`${formatPercent(winRate / 100)} אחוז הצלחה`}
+        delayMs={150}
+      />
+      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={200} />
+      <StatTile
+        label="בטיפול"
+        value={formatNumber(kpis.warningCount)}
+        icon={<IconClock />}
+        accent="warning"
+        delayMs={250}
+      />
       {pace && (
         <StatTile
           label="פרמיה צפויה לפי קצב החודש"
@@ -36,35 +62,9 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
                 : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
           }
           progress={pace.daysInMonth > 0 ? pace.daysElapsed / pace.daysInMonth : undefined}
-          delayMs={0}
+          delayMs={300}
         />
       )}
-      <StatTile
-        label="עסקאות"
-        value={formatNumber(Math.round(deals))}
-        icon={<IconBriefcase />}
-        delta={comparison ? { pct: comparison.countDeltaPct } : undefined}
-        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
-        delayMs={50}
-      />
-      <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={100} />
-      <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={150} />
-      <StatTile
-        label="הופק / הושלם"
-        value={formatNumber(kpis.goodCount)}
-        icon={<IconCheck />}
-        accent="good"
-        sub={`${formatPercent(winRate / 100)} אחוז הצלחה`}
-        delayMs={200}
-      />
-      <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={250} />
-      <StatTile
-        label="בטיפול"
-        value={formatNumber(kpis.warningCount)}
-        icon={<IconClock />}
-        accent="warning"
-        delayMs={300}
-      />
       <StatTile
         label="פרמיה נוכחית"
         value={formatCurrency(premium)}
