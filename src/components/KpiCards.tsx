@@ -32,6 +32,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const customers = useCountUp(kpis.distinctCustomers);
   const winRate = useCountUp(kpis.winRate * 100);
   const projected = useCountUp(pace?.projectedPremium ?? 0);
+  const goodPremium = useCountUp(kpis.goodPremium);
 
   const [order, setOrder] = useState<TileId[]>(() => {
     const saved = loadKpiOrder();
@@ -92,7 +93,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           value={formatNumber(kpis.goodCount)}
           icon={<IconCheck />}
           accent="good"
-          sub={`${formatPercent(winRate / 100)} אחוז הצלחה`}
+          sub={`${formatCurrency(goodPremium)} פרמיה שהופקה · ${formatPercent(winRate / 100)} אחוז הצלחה`}
           delayMs={delayMs}
         />
       ),

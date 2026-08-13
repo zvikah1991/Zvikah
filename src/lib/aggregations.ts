@@ -107,6 +107,7 @@ export interface Kpis {
   avgPremium: number;
   distinctCustomers: number;
   goodCount: number;
+  goodPremium: number;
   warningCount: number;
   criticalCount: number;
   winRate: number;
@@ -118,12 +119,15 @@ export function computeKpis(records: SalesRecord[], bucketOf: (status: string | 
   const customers = new Set(records.map((r) => r.customerId ?? r.customer).filter(Boolean));
 
   let goodCount = 0;
+  let goodPremium = 0;
   let warningCount = 0;
   let criticalCount = 0;
   for (const r of records) {
     const bucket = bucketOf(r.status);
-    if (bucket === "good") goodCount += 1;
-    else if (bucket === "critical") criticalCount += 1;
+    if (bucket === "good") {
+      goodCount += 1;
+      goodPremium += r.expectedPremium ?? 0;
+    } else if (bucket === "critical") criticalCount += 1;
     else warningCount += 1;
   }
 
@@ -135,6 +139,7 @@ export function computeKpis(records: SalesRecord[], bucketOf: (status: string | 
     avgPremium: totalDeals ? totalPremium / totalDeals : 0,
     distinctCustomers: customers.size,
     goodCount,
+    goodPremium,
     warningCount,
     criticalCount,
     winRate: decided ? goodCount / decided : 0,
