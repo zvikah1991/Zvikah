@@ -178,23 +178,40 @@ export function monthOverMonth(records: SalesRecord[]): MonthOverMonth | null {
 
 export interface MonthlyPace {
   monthLabel: string;
+  previousMonthLabel: string | null;
   actualPremium: number;
   projectedPremium: number;
+  previousSameDatePremium: number | null;
+  growthPct: number | null;
   daysElapsed: number;
   daysInMonth: number;
   isProjecting: boolean;
 }
 
+function premiumThroughDay(records: SalesRecord[], monthKey: string, throughDay: number): number {
+  let sum = 0;
+  for (const r of records) {
+    if (!r.requiredDate || monthKeyOf(r.requiredDate) !== monthKey) continue;
+    const day = Number(r.requiredDate.slice(8, 10));
+    if (day <= throughDay) sum += r.expectedPremium ?? 0;
+  }
+  return sum;
+}
+
 /**
  * Projects the latest month's premium to a full-month equivalent based on
- * its pace so far (actualPremium / daysElapsed * daysInMonth). For a month
- * that has already fully passed, daysElapsed equals daysInMonth so the
- * projection simply equals the actual total.
+ * its pace so far (actualPremium / daysElapsed * daysInMonth), and compares
+ * that same-far-in premium against the equivalent date in the previous
+ * month — an apples-to-apples read on whether this month is pacing ahead of
+ * or behind the last one. For a month that has already fully passed,
+ * daysElapsed equals daysInMonth so the projection simply equals the actual
+ * total (and the comparison is the full previous month).
  */
 export function monthlyPaceProjection(records: SalesRecord[], today: Date = new Date()): MonthlyPace | null {
   const trend = monthlyTrend(records);
   if (trend.length === 0) return null;
   const current = trend[trend.length - 1];
+  const previous = trend.length >= 2 ? trend[trend.length - 2] : null;
   const [y, m] = current.monthKey.split("-").map(Number);
   const todayY = today.getFullYear();
   const todayM = today.getMonth() + 1;
@@ -203,11 +220,28 @@ export function monthlyPaceProjection(records: SalesRecord[], today: Date = new 
   if (y > todayY || (y === todayY && m > todayM)) return null;
   const daysElapsed = y === todayY && m === todayM ? today.getDate() : daysInMonth;
 
-  const rate = daysElapsed > 0 ? current.premium / daysElapsed : 0;
+  // Only count days actually reached so far, in case the month's data includes future-dated entries.
+  const actualPremium = premiumThroughDay(records, current.monthKey, daysElapsed);
+  const rate = daysElapsed > 0 ? actualPremium / daysElapsed : 0;
+
+  let previousSameDatePremium: number | null = null;
+  let growthPct: number | null = null;
+  if (previous) {
+    const [py, pm] = previous.monthKey.split("-").map(Number);
+    const daysInPreviousMonth = new Date(py, pm, 0).getDate();
+    const cappedDay = Math.min(daysElapsed, daysInPreviousMonth);
+    previousSameDatePremium = premiumThroughDay(records, previous.monthKey, cappedDay);
+    growthPct =
+      previousSameDatePremium === 0 ? (actualPremium === 0 ? 0 : null) : (actualPremium - previousSameDatePremium) / previousSameDatePremium;
+  }
+
   return {
     monthLabel: current.monthKey,
-    actualPremium: current.premium,
+    previousMonthLabel: previous?.monthKey ?? null,
+    actualPremium,
     projectedPremium: rate * daysInMonth,
+    previousSameDatePremium,
+    growthPct,
     daysElapsed,
     daysInMonth,
     isProjecting: daysElapsed < daysInMonth,

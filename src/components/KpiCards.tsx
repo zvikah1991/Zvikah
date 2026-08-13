@@ -34,10 +34,13 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           label="פרמיה צפויה לפי קצב החודש"
           value={formatCurrency(projected)}
           icon={<IconTrendingUp />}
+          delta={pace.previousMonthLabel ? { pct: pace.growthPct } : undefined}
           sub={
-            pace.isProjecting
-              ? `הערכה לפי ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים · ${formatMonthKeyShort(pace.monthLabel)}`
-              : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
+            pace.previousMonthLabel
+              ? `לעומת אותה נקודה ב${formatMonthKeyShort(pace.previousMonthLabel)} · ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים`
+              : pace.isProjecting
+                ? `הערכה לפי ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים · ${formatMonthKeyShort(pace.monthLabel)}`
+                : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
           }
         />
       )}
