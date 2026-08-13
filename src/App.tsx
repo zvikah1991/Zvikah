@@ -7,8 +7,10 @@ import { buildColorScale } from "./lib/colorScale";
 import { currentMonthKey, monthRangeISO } from "./lib/format";
 import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
 import { Header } from "./components/Header";
+import { SectionNav } from "./components/SectionNav";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
+import { InsightBanner } from "./components/InsightBanner";
 import { AgentAppointmentBanner } from "./components/AgentAppointmentBanner";
 import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
 import { RepByMonthChart } from "./components/charts/RepByMonthChart";
@@ -18,6 +20,7 @@ import { RecentClosedList } from "./components/RecentClosedList";
 import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
 import { ErrorBanner } from "./components/ui/ErrorBanner";
+import { Reveal } from "./components/ui/Reveal";
 
 export default function App() {
   const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
@@ -47,7 +50,17 @@ export default function App() {
   const insurerColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "insurer")), [coreRecords]);
 
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen isolate">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[560px]"
+        style={{
+          background:
+            "radial-gradient(900px 420px at 12% -12%, color-mix(in oklab, var(--brand) 9%, transparent), transparent 60%)," +
+            "radial-gradient(900px 420px at 88% -12%, color-mix(in oklab, var(--brand-gold) 10%, transparent), transparent 60%)",
+        }}
+      />
+
       <Header
         meta={meta}
         isUsingSeed={isUsingSeed}
@@ -57,6 +70,7 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggle}
       />
+      <SectionNav />
 
       <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
         {error && <ErrorBanner message={error} onDismiss={clearError} />}
@@ -65,19 +79,28 @@ export default function App() {
           <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
         </div>
 
-        <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-        <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={420} />
-          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={460} />
-          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={500} />
-          <ProcessTypeStatusChart records={filtered} delayMs={540} />
+        <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
+          <InsightBanner records={filteredIgnoringDate} delayMs={0} />
+          <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
+          <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
         </div>
 
-        <RecentClosedList records={filtered} delayMs={600} />
-        <CustomersTable records={filtered} delayMs={640} />
-        <DataTable records={filtered} delayMs={680} />
+        <Reveal id="trends" className="grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ scrollMarginTop: "112px" }}>
+          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
+          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
+          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
+          <ProcessTypeStatusChart records={filtered} delayMs={240} />
+        </Reveal>
+
+        <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
+          <RecentClosedList records={filtered} delayMs={0} />
+        </Reveal>
+        <Reveal id="customers" style={{ scrollMarginTop: "112px" }}>
+          <CustomersTable records={filtered} delayMs={0} />
+        </Reveal>
+        <Reveal id="deals" style={{ scrollMarginTop: "112px" }}>
+          <DataTable records={filtered} delayMs={0} />
+        </Reveal>
 
         <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
           הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport

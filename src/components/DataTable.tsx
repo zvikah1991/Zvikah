@@ -93,7 +93,10 @@ export function DataTable({ records, delayMs }: { records: SalesRecord[]; delayM
           </thead>
           <tbody>
             {pageRows.map((r) => (
-              <tr key={r.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-2)]/60">
+              <tr
+                key={r.id}
+                className="border-b border-s-2 border-s-transparent border-[var(--border)] transition-colors last:border-b-0 hover:border-s-[var(--brand)] hover:bg-[var(--surface-2)]/60"
+              >
                 <td className="whitespace-nowrap px-3 py-2 text-end tabular-nums text-[var(--text-muted)]">{r.id}</td>
                 <td className="max-w-40 truncate px-3 py-2">{r.customer ?? "—"}</td>
                 <td className="max-w-36 truncate px-3 py-2 text-[var(--text-secondary)]">{r.processType ?? "—"}</td>

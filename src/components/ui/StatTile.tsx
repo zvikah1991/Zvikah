@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
 import { Card } from "./Card";
+import { Sparkline } from "./Sparkline";
 
 export function StatTile({
   label,
@@ -12,6 +13,7 @@ export function StatTile({
   className,
   delayMs,
   progress,
+  sparkline,
 }: {
   label: string;
   value: string;
@@ -24,6 +26,8 @@ export function StatTile({
   delayMs?: number;
   /** 0–1: renders a thin animated fill bar under the value (e.g. "days elapsed this month"). */
   progress?: number;
+  /** Recent trend points (oldest→newest) rendered as a small inline line chart. */
+  sparkline?: number[];
 }) {
   const accentVar = accent
     ? {
@@ -35,7 +39,10 @@ export function StatTile({
     : "var(--brand)";
 
   return (
-    <Card className={clsx("animate-fade-up overflow-hidden p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
+    <Card
+      className={clsx("hover-lift animate-fade-up overflow-hidden p-4", className)}
+      style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}
+    >
       <div
         className="absolute inset-x-0 top-0 h-[2px]"
         style={{ background: "linear-gradient(90deg, transparent, var(--brand-gold-soft), transparent)" }}
@@ -57,6 +64,11 @@ export function StatTile({
         {delta && delta.pct !== null && <DeltaBadge pct={delta.pct} positiveIsGood={delta.positiveIsGood ?? true} />}
       </div>
       {sub && <div className="mt-1 text-xs text-[var(--text-muted)]">{sub}</div>}
+      {sparkline && sparkline.length >= 2 && (
+        <div className="mt-2 -mb-1">
+          <Sparkline data={sparkline} color={accentVar} />
+        </div>
+      )}
       {progress !== undefined && (
         <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--surface-2)]" aria-hidden="true">
           <div

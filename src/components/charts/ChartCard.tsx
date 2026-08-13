@@ -27,7 +27,7 @@ export function ChartCard({
   const [view, setView] = useState<"chart" | "table">("chart");
 
   return (
-    <Card className={clsx("animate-fade-up p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
+    <Card className={clsx("hover-lift animate-fade-up p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import type { SalesRecord } from "../types";
-import { computeKpis, monthOverMonth, monthlyPaceProjection } from "../lib/aggregations";
+import { computeKpis, monthlyTrend, monthOverMonth, monthlyPaceProjection } from "../lib/aggregations";
 import { statusBucket } from "../lib/statusBuckets";
 import { formatCurrency, formatMonthKeyShort, formatNumber, formatPercent } from "../lib/format";
 import { useCountUp } from "../hooks/useCountUp";
@@ -33,6 +33,8 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const winRate = useCountUp(kpis.winRate * 100);
   const projected = useCountUp(pace?.projectedPremium ?? 0);
   const goodPremium = useCountUp(kpis.goodPremium);
+
+  const premiumTrend = useMemo(() => monthlyTrend(filteredIgnoringDate).slice(-8).map((p) => p.premium), [filteredIgnoringDate]);
 
   const [order, setOrder] = useState<TileId[]>(() => {
     const saved = loadKpiOrder();
@@ -114,6 +116,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           icon={<IconCoins />}
           delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
           sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
+          sparkline={premiumTrend}
           delayMs={delayMs}
         />
       ),
@@ -169,7 +172,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
               }}
               onDragEnd={commitOrder}
               className={clsx(
-                "group relative cursor-grab transition-[opacity,transform] active:cursor-grabbing hover:-translate-y-0.5",
+                "group relative cursor-grab transition-opacity active:cursor-grabbing",
                 draggedId === id && "opacity-40",
                 tile.className,
               )}

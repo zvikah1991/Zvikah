@@ -136,7 +136,7 @@ export function CustomersTable({ records, delayMs }: { records: SalesRecord[]; d
 
 function CustomerRow({ customer }: { customer: CustomerSummary }) {
   return (
-    <tr className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-2)]/60">
+    <tr className="border-b border-s-2 border-s-transparent border-[var(--border)] transition-colors last:border-b-0 hover:border-s-[var(--brand)] hover:bg-[var(--surface-2)]/60">
       <td className="max-w-44 truncate px-3 py-2 font-medium">{customer.customer}</td>
       <td className="whitespace-nowrap px-3 py-2 text-end tabular-nums">{formatNumber(customer.dealCount)}</td>
       <td className="whitespace-nowrap px-3 py-2 text-end font-medium tabular-nums">{formatCurrency(customer.totalPremium)}</td>
