@@ -1,5 +1,6 @@
 import type { Filters, SalesRecord } from "../types";
 import { monthKeyOf } from "./format";
+import { calendarDayForNthWorkDay, workDaysElapsedInMonth, workDaysInMonth } from "./workdays";
 
 export function applyFilters(records: SalesRecord[], filters: Filters, opts?: { ignoreDate?: boolean }): SalesRecord[] {
   const search = filters.search.trim().toLowerCase();
@@ -205,12 +206,15 @@ function premiumThroughDay(records: SalesRecord[], monthKey: string, throughDay:
 
 /**
  * Projects the latest month's premium to a full-month equivalent based on
- * its pace so far (actualPremium / daysElapsed * daysInMonth), and compares
- * that same-far-in premium against the equivalent date in the previous
- * month — an apples-to-apples read on whether this month is pacing ahead of
- * or behind the last one. For a month that has already fully passed,
- * daysElapsed equals daysInMonth so the projection simply equals the actual
- * total (and the comparison is the full previous month).
+ * its pace so far (actualPremium / workDaysElapsed * workDaysInMonth), and
+ * compares that same-far-in premium against the equivalent work day in the
+ * previous month — an apples-to-apples read on whether this month is pacing
+ * ahead of or behind the last one. The agency works Sunday–Thursday, so the
+ * pace is measured in work days, not raw calendar days: Friday/Saturday
+ * neither count toward the elapsed denominator nor toward the total. For a
+ * month that has already fully passed, workDaysElapsed equals workDaysInMonth
+ * so the projection simply equals the actual total (and the comparison is
+ * the full previous month).
  */
 export function monthlyPaceProjection(records: SalesRecord[], today: Date = new Date()): MonthlyPace | null {
   const trend = monthlyTrend(records);
@@ -220,22 +224,25 @@ export function monthlyPaceProjection(records: SalesRecord[], today: Date = new 
   const [y, m] = current.monthKey.split("-").map(Number);
   const todayY = today.getFullYear();
   const todayM = today.getMonth() + 1;
-  const daysInMonth = new Date(y, m, 0).getDate();
+  const daysInMonthCalendar = new Date(y, m, 0).getDate();
 
   if (y > todayY || (y === todayY && m > todayM)) return null;
-  const daysElapsed = y === todayY && m === todayM ? today.getDate() : daysInMonth;
+  const calendarDaysElapsed = y === todayY && m === todayM ? today.getDate() : daysInMonthCalendar;
+
+  const daysInMonth = workDaysInMonth(y, m);
+  const daysElapsed = workDaysElapsedInMonth(y, m, today);
 
   // Only count days actually reached so far, in case the month's data includes future-dated entries.
-  const actualPremium = premiumThroughDay(records, current.monthKey, daysElapsed);
+  const actualPremium = premiumThroughDay(records, current.monthKey, calendarDaysElapsed);
   const rate = daysElapsed > 0 ? actualPremium / daysElapsed : 0;
 
   let previousSameDatePremium: number | null = null;
   let growthPct: number | null = null;
   if (previous) {
     const [py, pm] = previous.monthKey.split("-").map(Number);
-    const daysInPreviousMonth = new Date(py, pm, 0).getDate();
-    const cappedDay = Math.min(daysElapsed, daysInPreviousMonth);
-    previousSameDatePremium = premiumThroughDay(records, previous.monthKey, cappedDay);
+    const cappedWorkDay = Math.min(daysElapsed, workDaysInMonth(py, pm));
+    const previousCalendarDay = calendarDayForNthWorkDay(py, pm, cappedWorkDay);
+    previousSameDatePremium = premiumThroughDay(records, previous.monthKey, previousCalendarDay);
     growthPct =
       previousSameDatePremium === 0 ? (actualPremium === 0 ? 0 : null) : (actualPremium - previousSameDatePremium) / previousSameDatePremium;
   }

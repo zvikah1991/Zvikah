@@ -134,9 +134,9 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           delta={pace.previousMonthLabel ? { pct: pace.growthPct } : undefined}
           sub={
             pace.previousMonthLabel
-              ? `לעומת אותה נקודה ב${formatMonthKeyShort(pace.previousMonthLabel)} · ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים`
+              ? `לעומת אותה נקודה ב${formatMonthKeyShort(pace.previousMonthLabel)} · ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימי עבודה`
               : pace.isProjecting
-                ? `הערכה לפי ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימים · ${formatMonthKeyShort(pace.monthLabel)}`
+                ? `הערכה לפי ${pace.daysElapsed} מתוך ${pace.daysInMonth} ימי עבודה · ${formatMonthKeyShort(pace.monthLabel)}`
                 : `${formatMonthKeyShort(pace.monthLabel)} הסתיים — זהה לבפועל`
           }
           progress={pace.daysInMonth > 0 ? pace.daysElapsed / pace.daysInMonth : undefined}

@@ -22,3 +22,17 @@ export function workDaysElapsedInMonth(year: number, month: number, today: Date 
   for (let d = 1; d <= uptoDay; d++) if (isWorkDay(new Date(year, month - 1, d))) count++;
   return count;
 }
+
+/** The calendar day-of-month on which the Nth work day of the month falls (capped to the month's last day). */
+export function calendarDayForNthWorkDay(year: number, month: number, n: number): number {
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (n <= 0) return 0;
+  let count = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    if (isWorkDay(new Date(year, month - 1, d))) {
+      count++;
+      if (count === n) return d;
+    }
+  }
+  return daysInMonth;
+}
