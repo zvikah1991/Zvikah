@@ -1,111 +1,79 @@
-import { useMemo, useState } from "react";
-import { EMPTY_FILTERS, type Filters } from "./types";
-import { useSalesData } from "./hooks/useSalesData";
-import { useTheme } from "./hooks/useTheme";
-import { applyFilters, groupByField } from "./lib/aggregations";
-import { buildColorScale } from "./lib/colorScale";
-import { currentMonthKey, monthRangeISO } from "./lib/format";
-import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
-import { Header } from "./components/Header";
-import { SectionNav } from "./components/SectionNav";
-import { FilterBar } from "./components/FilterBar";
-import { KpiCards } from "./components/KpiCards";
-import { InsightBanner } from "./components/InsightBanner";
-import { AgentAppointmentBanner } from "./components/AgentAppointmentBanner";
-import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
-import { RepByMonthChart } from "./components/charts/RepByMonthChart";
-import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
-import { RankedBarChart } from "./components/charts/RankedBarChart";
-import { RecentClosedList } from "./components/RecentClosedList";
-import { CustomersTable } from "./components/CustomersTable";
-import { DataTable } from "./components/DataTable";
-import { ErrorBanner } from "./components/ui/ErrorBanner";
-import { Reveal } from "./components/ui/Reveal";
+import { Routes, Route } from 'react-router-dom';
+import { isSupabaseConfigured } from './lib/supabase';
+import SetupRequired from './pages/SetupRequired';
+import Login from './pages/Login';
+import ChangePassword from './pages/ChangePassword';
+import { RequireAuth, RequireRole, RequireSessionOnly } from './routes/ProtectedRoute';
+
+import EmployeeLayout from './components/layout/EmployeeLayout';
+import EmployeeHome from './pages/employee/EmployeeHome';
+import MyHours from './pages/employee/MyHours';
+import CorrectionRequest from './pages/employee/CorrectionRequest';
+import Absences from './pages/employee/Absences';
+
+import AdminLayout from './components/layout/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminAttendance from './pages/admin/AdminAttendance';
+import AdminEmployees from './pages/admin/AdminEmployees';
+import AdminRequests from './pages/admin/AdminRequests';
+import AdminAbsences from './pages/admin/AdminAbsences';
+import AdminReports from './pages/admin/AdminReports';
+import AdminPayroll from './pages/admin/AdminPayroll';
+import AdminSettings from './pages/admin/AdminSettings';
+import AdminAuditLog from './pages/admin/AdminAuditLog';
 
 export default function App() {
-  const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
-  const { theme, toggle } = useTheme();
-  const [filters, setFilters] = useState<Filters>(() => {
-    const { from, to } = monthRangeISO(currentMonthKey());
-    return { ...EMPTY_FILTERS, dateFrom: from, dateTo: to };
-  });
-
-  // The report covers real sales only (שיחלוף מוצר / רכישת מוצר חדש); agent
-  // appointments and other administrative process types are excluded from
-  // every figure below and shown as their own separate line instead.
-  const coreRecords = useMemo(() => records.filter((r) => r.processType && CORE_PROCESS_TYPES.includes(r.processType)), [records]);
-  const agentAppointmentRecords = useMemo(
-    () => records.filter((r) => r.processType && AGENT_APPOINTMENT_PROCESS_TYPES.includes(r.processType)),
-    [records],
-  );
-
-  const filtered = useMemo(() => applyFilters(coreRecords, filters), [coreRecords, filters]);
-  const filteredIgnoringDate = useMemo(() => applyFilters(coreRecords, filters, { ignoreDate: true }), [coreRecords, filters]);
-  const agentAppointmentFiltered = useMemo(
-    () => applyFilters(agentAppointmentRecords, { ...filters, processTypes: [] }),
-    [agentAppointmentRecords, filters],
-  );
-
-  const repColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "rep")), [coreRecords]);
-  const insurerColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "insurer")), [coreRecords]);
+  if (!isSupabaseConfigured) {
+    return <SetupRequired />;
+  }
 
   return (
-    <div className="relative min-h-screen isolate">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[560px]"
-        style={{
-          background:
-            "radial-gradient(900px 420px at 12% -12%, color-mix(in oklab, var(--brand) 9%, transparent), transparent 60%)," +
-            "radial-gradient(900px 420px at 88% -12%, color-mix(in oklab, var(--brand-gold) 10%, transparent), transparent 60%)",
-        }}
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/change-password"
+        element={
+          <RequireSessionOnly>
+            <ChangePassword />
+          </RequireSessionOnly>
+        }
       />
 
-      <Header
-        meta={meta}
-        isUsingSeed={isUsingSeed}
-        isUploading={isUploading}
-        onUpload={uploadFile}
-        onReset={resetToSeed}
-        theme={theme}
-        onToggleTheme={toggle}
-      />
-      <SectionNav />
+      <Route
+        element={
+          <RequireAuth>
+            <RequireRole role="employee">
+              <EmployeeLayout />
+            </RequireRole>
+          </RequireAuth>
+        }
+      >
+        <Route path="/" element={<EmployeeHome />} />
+        <Route path="/my-hours" element={<MyHours />} />
+        <Route path="/correction" element={<CorrectionRequest />} />
+        <Route path="/absences" element={<Absences />} />
+      </Route>
 
-      <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
-        {error && <ErrorBanner message={error} onDismiss={clearError} />}
-
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-          <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
-        </div>
-
-        <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
-          <InsightBanner records={filteredIgnoringDate} delayMs={0} />
-          <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-          <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
-        </div>
-
-        <Reveal id="trends" className="grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ scrollMarginTop: "112px" }}>
-          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
-          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
-          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
-          <ProcessTypeStatusChart records={filtered} delayMs={240} />
-        </Reveal>
-
-        <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
-          <RecentClosedList records={filtered} delayMs={0} />
-        </Reveal>
-        <Reveal id="customers" style={{ scrollMarginTop: "112px" }}>
-          <CustomersTable records={filtered} delayMs={0} />
-        </Reveal>
-        <Reveal id="deals" style={{ scrollMarginTop: "112px" }}>
-          <DataTable records={filtered} delayMs={0} />
-        </Reveal>
-
-        <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
-          הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport
-        </footer>
-      </main>
-    </div>
+      <Route
+        path="/admin"
+        element={
+          <RequireAuth>
+            <RequireRole role="admin">
+              <AdminLayout />
+            </RequireRole>
+          </RequireAuth>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="attendance" element={<AdminAttendance />} />
+        <Route path="employees" element={<AdminEmployees />} />
+        <Route path="requests" element={<AdminRequests />} />
+        <Route path="absences" element={<AdminAbsences />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="payroll" element={<AdminPayroll />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="audit-log" element={<AdminAuditLog />} />
+      </Route>
+    </Routes>
   );
 }
