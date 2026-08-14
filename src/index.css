@@ -1,285 +1,97 @@
 @import "tailwindcss";
-@import "@fontsource/heebo/300.css";
 @import "@fontsource/heebo/400.css";
 @import "@fontsource/heebo/500.css";
 @import "@fontsource/heebo/600.css";
 @import "@fontsource/heebo/700.css";
 @import "@fontsource/heebo/800.css";
-@import "@fontsource/frank-ruhl-libre/500.css";
-@import "@fontsource/frank-ruhl-libre/600.css";
-@import "@fontsource/frank-ruhl-libre/700.css";
 
 @theme {
-  --font-sans: "Heebo", system-ui, -apple-system, "Segoe UI", "Arial Hebrew", Arial, sans-serif;
-  --font-serif: "Frank Ruhl Libre", "Times New Roman", Georgia, serif;
-}
+  --font-sans: "Heebo", ui-sans-serif, system-ui, sans-serif;
 
-:root {
-  color-scheme: light;
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
 
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --surface-2: #f2f1ee;
-  --text-primary: #0b0b0b;
-  --text-secondary: #52514e;
-  --text-muted: #898781;
-  --grid: #e1e0d9;
-  --baseline: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.1);
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+  --color-ink-950: #020617;
 
-  /* Chrome/brand accent — distinct from the chart series palette below, so
-     UI affordances (buttons, focus, active states) can carry a signature
-     identity without touching the accessibility-validated data colors. */
-  --brand: #22315f;
-  --brand-soft: #4a5a94;
-  --brand-gold: #a9812f;
-  --brand-gold-soft: #cbaa5c;
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
 
-  --series-1: #2a78d6; /* blue */
-  --series-2: #eb6834; /* orange */
-  --series-3: #1baf7a; /* aqua */
-  --series-4: #eda100; /* yellow */
-  --series-5: #e87ba4; /* magenta */
-  --series-6: #008300; /* green */
-  --series-7: #4a3aa7; /* violet */
-  --series-8: #e34948; /* red */
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-slide-up: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
-  --status-good: #0ca30c;
-  --status-warning: #fab219;
-  --status-serious: #ec835a;
-  --status-critical: #d03b3b;
-
-  --success-text: #006300;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #232322;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #898781;
-    --grid: #2c2c2a;
-    --baseline: #383835;
-    --border: rgba(255, 255, 255, 0.1);
-
-    --brand: #5468b8;
-    --brand-soft: #8393dd;
-    --brand-gold: #d4ac54;
-    --brand-gold-soft: #e8cf94;
-
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --series-4: #c98500;
-    --series-5: #d55181;
-    --series-6: #008300;
-    --series-7: #9085e9;
-    --series-8: #e66767;
-
-    --success-text: #0ca30c;
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0.4); }
+    70% { box-shadow: 0 0 0 14px rgb(34 197 94 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0); }
   }
 }
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --page: #0d0d0d;
-  --surface: #1a1a19;
-  --surface-2: #232322;
-  --text-primary: #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted: #898781;
-  --grid: #2c2c2a;
-  --baseline: #383835;
-  --border: rgba(255, 255, 255, 0.1);
-
-  --brand: #5468b8;
-  --brand-soft: #8393dd;
-  --brand-gold: #d4ac54;
-  --brand-gold-soft: #e8cf94;
-
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
-  --series-5: #d55181;
-  --series-6: #008300;
-  --series-7: #9085e9;
-  --series-8: #e66767;
-
-  --success-text: #0ca30c;
-}
-
-html,
-body {
-  background: var(--page);
-  color: var(--text-primary);
+html {
+  color-scheme: light dark;
 }
 
 body {
   font-family: var(--font-sans);
-  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-ink-50);
+  color: var(--color-ink-900);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-ink-100);
+  }
 }
 
 * {
-  border-color: var(--border);
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--baseline);
-  border-radius: 999px;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface) 37%, var(--surface-2) 63%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s linear infinite;
-}
-
-@keyframes grow-width {
-  from {
-    width: 0%;
-  }
-}
-
-@keyframes soft-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in oklab, currentColor 45%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 6px color-mix(in oklab, currentColor 0%, transparent);
-  }
-}
-
-/* Motion is opt-out, not opt-in: everyone gets it unless they've asked the OS not to. */
-@media (prefers-reduced-motion: no-preference) {
-  .animate-fade-up {
-    animation: fade-up 0.45s ease both;
-  }
-
-  .animate-grow-width {
-    animation: grow-width 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  .animate-live-dot {
-    animation: soft-pulse 2.2s ease-in-out infinite;
-  }
-
-  .animate-live-dot::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: inherit;
-    animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
-    opacity: 1;
-    transform: none;
-  }
-
-  .animate-grow-width {
-    width: var(--grow-to, 100%);
-  }
-}
-
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-.scrollbar-thin {
   scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-300) transparent;
 }
 
-.hover-lift {
-  transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease;
+::selection {
+  background-color: var(--color-brand-200);
 }
 
-.hover-lift:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.05),
-    0 20px 36px -16px rgba(0, 0, 0, 0.22);
-}
-
-/* Scroll-triggered reveal: content below the fold fades/slides in as it enters
-   view, instead of every section animating at once on mount (invisibly, off-screen). */
-.reveal {
-  opacity: 0;
-  transform: translateY(18px);
-}
-
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .reveal {
-    transition:
-      opacity 0.6s ease,
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
-
-  .hover-lift:hover {
-    transform: none;
-  }
-}
-
-/* Print/PDF export never fires scroll events, so scroll-triggered reveals must default to visible. */
-@media print {
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+input, textarea, select {
+  font-family: inherit;
 }
