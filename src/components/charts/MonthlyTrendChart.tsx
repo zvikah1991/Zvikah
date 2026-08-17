@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { SalesRecord } from "../../types";
 import { monthlyTrend } from "../../lib/aggregations";
 import { formatCurrency, formatMonthKey, formatMonthKeyShort, formatNumber } from "../../lib/format";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -16,6 +17,9 @@ const MONTHS_BACK_OPTIONS = [
 export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
   const [metric, setMetric] = useState<"premium" | "count">("premium");
   const [monthsBack, setMonthsBack] = useState<string>("12");
+  // Bar value labels need real horizontal room per bar — on narrow screens they overlap, so
+  // rely on the tooltip / table-view toggle there instead.
+  const showBarLabels = useMediaQuery("(min-width: 640px)");
   const fullTrend = useMemo(() => monthlyTrend(records), [records]);
   const trend = useMemo(
     () => (monthsBack === "all" ? fullTrend : fullTrend.slice(-Number(monthsBack))),
@@ -97,7 +101,22 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}
                   animationEasing="ease-out"
-                />
+                >
+                  {showBarLabels && (
+                    <LabelList
+                      dataKey={metric}
+                      position="top"
+                      fill="var(--text-muted)"
+                      fontSize={10}
+                      zIndex={0}
+                      formatter={(v: unknown) => {
+                        const n = Number(v);
+                        if (!n) return "";
+                        return metric === "premium" ? formatCurrency(n) : formatNumber(n);
+                      }}
+                    />
+                  )}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           )}

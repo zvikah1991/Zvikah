@@ -16,6 +16,7 @@ import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
 import { RepByMonthChart } from "./components/charts/RepByMonthChart";
 import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
 import { RankedBarChart } from "./components/charts/RankedBarChart";
+import { RepLeaderboard } from "./components/RepLeaderboard";
 import { RecentClosedList } from "./components/RecentClosedList";
 import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
@@ -90,6 +91,10 @@ export default function App() {
           <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
           <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
           <ProcessTypeStatusChart records={filtered} delayMs={240} />
+        </Reveal>
+
+        <Reveal id="leaderboard" style={{ scrollMarginTop: "112px" }}>
+          <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
         </Reveal>
 
         <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
