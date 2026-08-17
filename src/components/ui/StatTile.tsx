@@ -7,7 +7,7 @@ export function StatTile({
   label,
   value,
   sub,
-  accent,
+  accentColor,
   delta,
   icon,
   className,
@@ -18,7 +18,8 @@ export function StatTile({
   label: string;
   value: string;
   sub?: string;
-  accent?: "good" | "warning" | "critical" | "neutral";
+  /** CSS color (or var()) used for this tile's border, icon badge, and progress/sparkline accent. */
+  accentColor?: string;
   delta?: { pct: number | null; positiveIsGood?: boolean } | null;
   icon?: ReactNode;
   className?: string;
@@ -29,25 +30,16 @@ export function StatTile({
   /** Recent trend points (oldest→newest) rendered as a small inline line chart. */
   sparkline?: number[];
 }) {
-  const accentVar = accent
-    ? {
-        good: "var(--status-good)",
-        warning: "var(--status-warning)",
-        critical: "var(--status-critical)",
-        neutral: "var(--brand)",
-      }[accent]
-    : "var(--brand)";
+  const accentVar = accentColor ?? "var(--brand)";
 
   return (
     <Card
       className={clsx("hover-lift animate-fade-up overflow-hidden p-4", className)}
-      style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}
+      style={{
+        ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
+        borderColor: `color-mix(in oklab, ${accentVar} 45%, var(--border))`,
+      }}
     >
-      <div
-        className="absolute inset-x-0 top-0 h-[2px]"
-        style={{ background: "linear-gradient(90deg, transparent, var(--brand-gold-soft), transparent)" }}
-        aria-hidden="true"
-      />
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm text-[var(--text-secondary)]">{label}</span>
         {icon && (

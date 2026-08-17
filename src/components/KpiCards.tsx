@@ -76,6 +76,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           label="עסקאות"
           value={formatNumber(Math.round(deals))}
           icon={<IconBriefcase />}
+          accentColor="var(--series-7)"
           delta={comparison ? { pct: comparison.countDeltaPct } : undefined}
           sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
           delayMs={delayMs}
@@ -83,10 +84,20 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
       ),
     },
     avgPremium: {
-      render: (delayMs) => <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} delayMs={delayMs} />,
+      render: (delayMs) => (
+        <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} accentColor="var(--series-2)" delayMs={delayMs} />
+      ),
     },
     customers: {
-      render: (delayMs) => <StatTile label="לקוחות ייחודיים" value={formatNumber(Math.round(customers))} icon={<IconUsers />} delayMs={delayMs} />,
+      render: (delayMs) => (
+        <StatTile
+          label="לקוחות ייחודיים"
+          value={formatNumber(Math.round(customers))}
+          icon={<IconUsers />}
+          accentColor="var(--series-3)"
+          delayMs={delayMs}
+        />
+      ),
     },
     completed: {
       render: (delayMs) => (
@@ -94,7 +105,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           label="הופק / הושלם"
           value={formatNumber(kpis.goodCount)}
           icon={<IconCheck />}
-          accent="good"
+          accentColor="var(--status-good)"
           sub={`${formatCurrency(goodPremium)} פרמיה שהופקה · ${formatPercent(winRate / 100)} אחוז הצלחה`}
           delayMs={delayMs}
         />
@@ -102,11 +113,25 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
     },
     cancelled: {
       render: (delayMs) => (
-        <StatTile label="בוטל / נדחה" value={formatNumber(kpis.criticalCount)} icon={<IconX />} accent="critical" delayMs={delayMs} />
+        <StatTile
+          label="בוטל / נדחה"
+          value={formatNumber(kpis.criticalCount)}
+          icon={<IconX />}
+          accentColor="var(--status-critical)"
+          delayMs={delayMs}
+        />
       ),
     },
     inProgress: {
-      render: (delayMs) => <StatTile label="בטיפול" value={formatNumber(kpis.warningCount)} icon={<IconClock />} accent="warning" delayMs={delayMs} />,
+      render: (delayMs) => (
+        <StatTile
+          label="בטיפול"
+          value={formatNumber(kpis.warningCount)}
+          icon={<IconClock />}
+          accentColor="var(--status-warning)"
+          delayMs={delayMs}
+        />
+      ),
     },
     current: {
       render: (delayMs) => (
@@ -114,6 +139,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           label="פרמיה נוכחית"
           value={formatCurrency(premium)}
           icon={<IconCoins />}
+          accentColor="var(--series-1)"
           delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
           sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
           sparkline={premiumTrend}
@@ -131,6 +157,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           label="פרמיה צפויה לפי קצב החודש"
           value={formatCurrency(projected)}
           icon={<IconTrendingUp />}
+          accentColor="var(--status-good)"
           delta={pace.previousMonthLabel ? { pct: pace.growthPct } : undefined}
           sub={
             pace.previousMonthLabel
