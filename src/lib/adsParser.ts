@@ -1,16 +1,18 @@
 import type { AdsDayRecord } from "../types";
-import { detectDelimiter, matchAlias, splitLine, toNumber } from "./csvUtils";
+import { detectColumns, detectDelimiter, readFileAsText, splitLine, toNumber } from "./csvUtils";
 
 // Google Ads' own CSV/table exports don't use a fixed column layout — the exact
 // headers depend on report type and UI language (Hebrew or English). Matching by
 // keyword (not position) lets the same importer accept a "Campaigns" report, a
 // "Search terms" report, or a table copy-pasted straight from the Ads UI.
+// "מחיר" (price) is the actual cost column in the Hebrew UI's own reports —
+// "עלות" only shows up in some locales/report types, so both are kept.
 const HEADER_ALIASES: Record<"date" | "cost" | "clicks" | "impressions" | "calls", string[]> = {
   date: ["יום", "תאריך", "day", "date"],
-  cost: ["עלות", "cost", "spend", "הוצאה"],
+  cost: ["מחיר", "עלות", "cost", "spend", "הוצאה"],
   clicks: ["קליקים", "clicks"],
   impressions: ["חשיפות", "impr", "impression"],
-  calls: ["שיחות", "call", "המר", "conver"],
+  calls: ["המרות", "שיחות", "call", "conver", "המר"],
 };
 
 export class AdsParseError extends Error {}
@@ -69,12 +71,7 @@ export function parseAdsExport(text: string): AdsDayRecord[] {
   for (let i = 0; i < lines.length; i++) {
     const delim = detectDelimiter(lines[i]);
     const cells = splitLine(lines[i], delim);
-    const idx: Partial<Record<keyof typeof HEADER_ALIASES, number>> = {};
-    cells.forEach((cell, ci) => {
-      for (const field of Object.keys(HEADER_ALIASES) as (keyof typeof HEADER_ALIASES)[]) {
-        if (idx[field] === undefined && matchAlias(cell, HEADER_ALIASES[field])) idx[field] = ci;
-      }
-    });
+    const idx = detectColumns(cells, HEADER_ALIASES);
     if (idx.date !== undefined && idx.cost !== undefined) {
       headerIndex = i;
       delimiter = delim;
@@ -128,6 +125,6 @@ export function parseAdsExport(text: string): AdsDayRecord[] {
 }
 
 export async function parseAdsFile(file: File): Promise<AdsDayRecord[]> {
-  const text = await file.text();
+  const text = await readFileAsText(file);
   return parseAdsExport(text);
 }

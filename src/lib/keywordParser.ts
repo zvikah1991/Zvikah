@@ -1,17 +1,19 @@
 import type { KeywordPerfRecord } from "../types";
-import { detectDelimiter, matchAlias, splitLine, toNumber } from "./csvUtils";
+import { detectColumns, detectDelimiter, readFileAsText, splitLine, toNumber } from "./csvUtils";
 
 // The "Keywords" report from Google Ads (Campaigns → Keywords → download, or
 // Reports → Predefined reports → Keywords) — one row per keyword with its own
 // cost/clicks/calls. This is what actually shows which keywords are cheap per
 // call and which are expensive, so bids/budget can be redirected accordingly.
+// "מחיר" (price) is the actual cost column in the Hebrew UI's own reports —
+// "עלות" only shows up in some locales/report types, so both are kept.
 const HEADER_ALIASES: Record<"keyword" | "matchType" | "cost" | "clicks" | "impressions" | "calls", string[]> = {
   keyword: ["מילת מפתח", "keyword"],
-  matchType: ["התאמה", "match type"],
-  cost: ["עלות", "cost", "spend", "הוצאה"],
+  matchType: ["סוג התאמה", "התאמה", "match type"],
+  cost: ["מחיר", "עלות", "cost", "spend", "הוצאה"],
   clicks: ["קליקים", "clicks"],
   impressions: ["חשיפות", "impr", "impression"],
-  calls: ["שיחות", "call", "המר", "conver"],
+  calls: ["המרות", "שיחות", "call", "conver", "המר"],
 };
 
 const SKIP_ROW_MARKERS = ["סה\"כ", 'סה"כ', "total", "אחר: "];
@@ -43,12 +45,7 @@ export function parseKeywordExport(text: string): KeywordPerfRecord[] {
   for (let i = 0; i < lines.length; i++) {
     const delim = detectDelimiter(lines[i]);
     const cells = splitLine(lines[i], delim);
-    const idx: Partial<Record<keyof typeof HEADER_ALIASES, number>> = {};
-    cells.forEach((cell, ci) => {
-      for (const field of Object.keys(HEADER_ALIASES) as (keyof typeof HEADER_ALIASES)[]) {
-        if (idx[field] === undefined && matchAlias(cell, HEADER_ALIASES[field])) idx[field] = ci;
-      }
-    });
+    const idx = detectColumns(cells, HEADER_ALIASES);
     if (idx.keyword !== undefined && idx.cost !== undefined) {
       headerIndex = i;
       delimiter = delim;
@@ -103,6 +100,6 @@ export function parseKeywordExport(text: string): KeywordPerfRecord[] {
 }
 
 export async function parseKeywordFile(file: File): Promise<KeywordPerfRecord[]> {
-  const text = await file.text();
+  const text = await readFileAsText(file);
   return parseKeywordExport(text);
 }
