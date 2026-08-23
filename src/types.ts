@@ -57,3 +57,12 @@ export interface AdsMeta {
   fileName?: string;
   recordCount: number;
 }
+
+export interface KeywordPerfRecord {
+  keyword: string;
+  matchType: string | null;
+  cost: number;
+  clicks: number | null;
+  impressions: number | null;
+  calls: number;
+}

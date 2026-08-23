@@ -1,4 +1,5 @@
 import type { AdsDayRecord } from "../types";
+import { detectDelimiter, matchAlias, splitLine, toNumber } from "./csvUtils";
 
 // Google Ads' own CSV/table exports don't use a fixed column layout — the exact
 // headers depend on report type and UI language (Hebrew or English). Matching by
@@ -13,50 +14,6 @@ const HEADER_ALIASES: Record<"date" | "cost" | "clicks" | "impressions" | "calls
 };
 
 export class AdsParseError extends Error {}
-
-function detectDelimiter(headerLine: string): string {
-  const tabCount = (headerLine.match(/\t/g) ?? []).length;
-  const commaCount = (headerLine.match(/,/g) ?? []).length;
-  return tabCount > commaCount ? "\t" : ",";
-}
-
-/** Splits one CSV line on the given delimiter, respecting double-quoted fields. */
-function splitLine(line: string, delimiter: string): string[] {
-  if (delimiter === "\t") return line.split("\t").map((c) => c.trim());
-  const cells: string[] = [];
-  let cur = "";
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
-        cur += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (ch === delimiter && !inQuotes) {
-      cells.push(cur.trim());
-      cur = "";
-    } else {
-      cur += ch;
-    }
-  }
-  cells.push(cur.trim());
-  return cells;
-}
-
-function matchAlias(header: string, aliases: string[]): boolean {
-  const h = header.trim().toLowerCase();
-  return aliases.some((a) => h.includes(a.toLowerCase()));
-}
-
-function toNumber(cell: string | undefined): number {
-  if (!cell) return 0;
-  const cleaned = cell.replace(/[^\d.,-]/g, "").replace(/,/g, "");
-  const n = Number(cleaned);
-  return Number.isFinite(n) ? n : 0;
-}
 
 const HEBREW_MONTHS: Record<string, number> = {
   ינו: 1, פבר: 2, מרץ: 3, אפר: 4, מאי: 5, יונ: 6, יול: 7, אוג: 8, ספט: 9, אוק: 10, נוב: 11, דצמ: 12,

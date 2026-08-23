@@ -4,6 +4,7 @@ import { AdsImportPanel } from "./AdsImportPanel";
 import { AdsKpiCards } from "./AdsKpiCards";
 import { AdsTrendChart } from "./AdsTrendChart";
 import { CampaignChecklist } from "./CampaignChecklist";
+import { KeywordSection } from "./KeywordSection";
 
 export function AdsDashboard() {
   const {
@@ -41,6 +42,10 @@ export function AdsDashboard() {
 
       <div id="ads-trend" className="grid grid-cols-1 gap-4" style={{ scrollMarginTop: "112px" }}>
         <AdsTrendChart records={records} monthlyBudget={monthlyBudget} delayMs={0} />
+      </div>
+
+      <div id="ads-keywords" style={{ scrollMarginTop: "112px" }}>
+        <KeywordSection />
       </div>
 
       <div id="ads-guide" style={{ scrollMarginTop: "112px" }}>

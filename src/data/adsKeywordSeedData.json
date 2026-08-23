@@ -1,0 +1,98 @@
+[
+  {
+    "keyword": "ביטוח בריאות",
+    "matchType": "התאמה מדויקת",
+    "cost": 283.53,
+    "clicks": 127,
+    "impressions": 1661,
+    "calls": 43
+  },
+  {
+    "keyword": "ביטוח חיים",
+    "matchType": "התאמה מדויקת",
+    "cost": 215.24,
+    "clicks": 111,
+    "impressions": 1654,
+    "calls": 30
+  },
+  {
+    "keyword": "כמה עולה ביטוח בריאות",
+    "matchType": "ביטוי",
+    "cost": 106.89,
+    "clicks": 57,
+    "impressions": 927,
+    "calls": 20
+  },
+  {
+    "keyword": "ביטוח בריאות משלים",
+    "matchType": "ביטוי",
+    "cost": 179.52,
+    "clicks": 87,
+    "impressions": 1013,
+    "calls": 30
+  },
+  {
+    "keyword": "החלפת ביטוח בריאות",
+    "matchType": "ביטוי",
+    "cost": 269.9,
+    "clicks": 129,
+    "impressions": 1697,
+    "calls": 38
+  },
+  {
+    "keyword": "ביטוח בריאות למשפחה",
+    "matchType": "ביטוי",
+    "cost": 67.11,
+    "clicks": 35,
+    "impressions": 588,
+    "calls": 8
+  },
+  {
+    "keyword": "יועץ ביטוח בריאות",
+    "matchType": "רחבה",
+    "cost": 179.53,
+    "clicks": 43,
+    "impressions": 506,
+    "calls": 3
+  },
+  {
+    "keyword": "הצעת מחיר ביטוח חיים",
+    "matchType": "ביטוי",
+    "cost": 211.49,
+    "clicks": 70,
+    "impressions": 1233,
+    "calls": 5
+  },
+  {
+    "keyword": "ביטוח בריאות פרטי",
+    "matchType": "רחבה",
+    "cost": 391.2,
+    "clicks": 115,
+    "impressions": 1468,
+    "calls": 10
+  },
+  {
+    "keyword": "ביטוח סיעודי",
+    "matchType": "רחבה",
+    "cost": 200.62,
+    "clicks": 59,
+    "impressions": 980,
+    "calls": 4
+  },
+  {
+    "keyword": "ביטוח בריאות מחירים",
+    "matchType": "רחבה",
+    "cost": 373.88,
+    "clicks": 92,
+    "impressions": 1210,
+    "calls": 5
+  },
+  {
+    "keyword": "סוכן ביטוח בריאות",
+    "matchType": "רחבה",
+    "cost": 336.27,
+    "clicks": 76,
+    "impressions": 1178,
+    "calls": 7
+  }
+]

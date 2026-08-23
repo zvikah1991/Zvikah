@@ -1,4 +1,4 @@
-import type { AdsDayRecord, AdsMeta, DataMeta, SalesRecord } from "../types";
+import type { AdsDayRecord, AdsMeta, DataMeta, KeywordPerfRecord, SalesRecord } from "../types";
 
 const RECORDS_KEY = "zvikah.sales.records.v1";
 const META_KEY = "zvikah.sales.meta.v1";
@@ -7,8 +7,12 @@ const KPI_ORDER_KEY = "zvikah.kpiOrder.v1";
 const ADS_RECORDS_KEY = "zvikah.ads.records.v1";
 const ADS_META_KEY = "zvikah.ads.meta.v1";
 const ADS_BUDGET_KEY = "zvikah.ads.monthlyBudget.v1";
+const KEYWORD_RECORDS_KEY = "zvikah.ads.keywords.records.v1";
+const KEYWORD_META_KEY = "zvikah.ads.keywords.meta.v1";
+const TARGET_COST_PER_CALL_KEY = "zvikah.ads.targetCostPerCall.v1";
 
 export const DEFAULT_ADS_MONTHLY_BUDGET = 5000;
+export const DEFAULT_TARGET_COST_PER_CALL = 7;
 
 export function loadStoredData(): { records: SalesRecord[]; meta: DataMeta } | null {
   try {
@@ -71,6 +75,37 @@ export function loadAdsBudget(): number {
 
 export function saveAdsBudget(budget: number): void {
   localStorage.setItem(ADS_BUDGET_KEY, String(budget));
+}
+
+export function loadStoredKeywordData(): { records: KeywordPerfRecord[]; meta: AdsMeta } | null {
+  try {
+    const rawRecords = localStorage.getItem(KEYWORD_RECORDS_KEY);
+    const rawMeta = localStorage.getItem(KEYWORD_META_KEY);
+    if (!rawRecords || !rawMeta) return null;
+    return { records: JSON.parse(rawRecords), meta: JSON.parse(rawMeta) };
+  } catch {
+    return null;
+  }
+}
+
+export function saveKeywordData(records: KeywordPerfRecord[], meta: AdsMeta): void {
+  localStorage.setItem(KEYWORD_RECORDS_KEY, JSON.stringify(records));
+  localStorage.setItem(KEYWORD_META_KEY, JSON.stringify(meta));
+}
+
+export function clearStoredKeywordData(): void {
+  localStorage.removeItem(KEYWORD_RECORDS_KEY);
+  localStorage.removeItem(KEYWORD_META_KEY);
+}
+
+export function loadTargetCostPerCall(): number {
+  const raw = localStorage.getItem(TARGET_COST_PER_CALL_KEY);
+  const n = raw ? Number(raw) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : DEFAULT_TARGET_COST_PER_CALL;
+}
+
+export function saveTargetCostPerCall(target: number): void {
+  localStorage.setItem(TARGET_COST_PER_CALL_KEY, String(target));
 }
 
 export function loadKpiOrder(): string[] | null {
