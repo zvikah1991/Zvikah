@@ -1,0 +1,20 @@
+{
+  "name": "zvikah-ads-automation",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "CLI tools for direct, confirmed changes to the Google Ads call campaign — see README.md before running anything.",
+  "scripts": {
+    "auth": "node auth.js",
+    "list": "node listKeywords.js",
+    "pause": "node pauseKeyword.js",
+    "add-phrase": "node addPhraseKeyword.js",
+    "set-target-cpa": "node setTargetCpa.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "google-ads-api": "^24.1.0",
+    "google-auth-library": "^11.0.2",
+    "open": "^11.0.1"
+  }
+}
