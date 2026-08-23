@@ -8,6 +8,8 @@ import { currentMonthKey, monthRangeISO } from "./lib/format";
 import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
 import { Header } from "./components/Header";
 import { SectionNav } from "./components/SectionNav";
+import { ViewTabs, type AppView } from "./components/ViewTabs";
+import { AdsDashboard } from "./components/ads/AdsDashboard";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
 import { InsightBanner } from "./components/InsightBanner";
@@ -26,6 +28,7 @@ import { Reveal } from "./components/ui/Reveal";
 export default function App() {
   const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
   const { theme, toggle } = useTheme();
+  const [view, setView] = useState<AppView>("sales");
   const [filters, setFilters] = useState<Filters>(() => {
     const { from, to } = monthRangeISO(currentMonthKey());
     return { ...EMPTY_FILTERS, dateFrom: from, dateTo: to };
@@ -71,46 +74,53 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggle}
       />
-      <SectionNav />
+      <ViewTabs view={view} onChange={setView} />
+      {view === "sales" && <SectionNav />}
 
-      <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
-        {error && <ErrorBanner message={error} onDismiss={clearError} />}
+      {view === "ads" ? (
+        <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
+          <AdsDashboard />
+        </main>
+      ) : (
+        <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
+          {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-          <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
-        </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
+            <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
+          </div>
 
-        <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
-          <InsightBanner records={filteredIgnoringDate} delayMs={0} />
-          <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-          <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
-        </div>
+          <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
+            <InsightBanner records={filteredIgnoringDate} delayMs={0} />
+            <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
+            <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
+          </div>
 
-        <Reveal id="trends" className="grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ scrollMarginTop: "112px" }}>
-          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
-          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
-          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
-          <ProcessTypeStatusChart records={filtered} delayMs={240} />
-        </Reveal>
+          <Reveal id="trends" className="grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ scrollMarginTop: "112px" }}>
+            <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
+            <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
+            <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
+            <ProcessTypeStatusChart records={filtered} delayMs={240} />
+          </Reveal>
 
-        <Reveal id="leaderboard" style={{ scrollMarginTop: "112px" }}>
-          <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
-        </Reveal>
+          <Reveal id="leaderboard" style={{ scrollMarginTop: "112px" }}>
+            <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
+          </Reveal>
 
-        <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
-          <RecentClosedList records={filtered} delayMs={0} />
-        </Reveal>
-        <Reveal id="customers" style={{ scrollMarginTop: "112px" }}>
-          <CustomersTable records={filtered} delayMs={0} />
-        </Reveal>
-        <Reveal id="deals" style={{ scrollMarginTop: "112px" }}>
-          <DataTable records={filtered} delayMs={0} />
-        </Reveal>
+          <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
+            <RecentClosedList records={filtered} delayMs={0} />
+          </Reveal>
+          <Reveal id="customers" style={{ scrollMarginTop: "112px" }}>
+            <CustomersTable records={filtered} delayMs={0} />
+          </Reveal>
+          <Reveal id="deals" style={{ scrollMarginTop: "112px" }}>
+            <DataTable records={filtered} delayMs={0} />
+          </Reveal>
 
-        <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
-          הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport
-        </footer>
-      </main>
+          <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
+            הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport
+          </footer>
+        </main>
+      )}
     </div>
   );
 }

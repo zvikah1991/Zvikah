@@ -41,3 +41,19 @@ export const EMPTY_FILTERS: Filters = {
 };
 
 export type StatusBucket = "good" | "warning" | "critical" | "neutral";
+
+// -- Google Ads call-campaign tracker (self-managed, replaces the paid marketer's reporting) --
+
+export interface AdsDayRecord {
+  date: string; // ISO yyyy-mm-dd
+  cost: number;
+  clicks: number | null;
+  impressions: number | null;
+  calls: number; // call conversions (the thing actually worth paying for)
+}
+
+export interface AdsMeta {
+  updatedAt: string; // ISO datetime of the upload/paste
+  fileName?: string;
+  recordCount: number;
+}

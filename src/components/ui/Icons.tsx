@@ -139,6 +139,43 @@ export function IconGripDots({ className }: IconProps) {
   );
 }
 
+export function IconPhone({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M4.5 4h3.2l1.6 4-2 1.5a11 11 0 0 0 5.2 5.2l1.5-2 4 1.6v3.2c0 1-.8 1.8-1.8 1.7A16.5 16.5 0 0 1 3 5.8C2.9 4.8 3.6 4 4.5 4Z" />
+    </svg>
+  );
+}
+
+export function IconMegaphone({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M3 10v4a1.5 1.5 0 0 0 1.5 1.5H6l1 4h2l-.7-4H10l8 4V6l-8 4H4.5A1.5 1.5 0 0 0 3 10Z" />
+      <path d="M20 9v6" />
+    </svg>
+  );
+}
+
+export function IconGauge({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M4 15a8 8 0 1 1 16 0" />
+      <path d="M12 15l3.5-4.5" />
+      <path d="M12 15v.01" />
+    </svg>
+  );
+}
+
+export function IconClipboardList({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <rect x="5" y="4" width="14" height="17" rx="2" />
+      <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M8.5 11h7M8.5 15h7M8.5 8h3" />
+    </svg>
+  );
+}
+
 export function IconRotateCcw({ className }: IconProps) {
   return (
     <svg {...base} className={className} stroke="currentColor">
