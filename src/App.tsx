@@ -22,6 +22,8 @@ import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
 import { ErrorBanner } from "./components/ui/ErrorBanner";
 import { Reveal } from "./components/ui/Reveal";
+import { AuroraBackground } from "./components/ui/AuroraBackground";
+import { SectionHeading } from "./components/ui/SectionHeading";
 
 export default function App() {
   const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
@@ -52,18 +54,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen isolate">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(1100px 620px at 6% -10%, color-mix(in oklab, var(--series-1) 16%, transparent), transparent 60%)," +
-            "radial-gradient(900px 560px at 94% -8%, color-mix(in oklab, var(--brand-gold) 20%, transparent), transparent 60%)," +
-            "radial-gradient(1000px 620px at 12% 55%, color-mix(in oklab, var(--series-3) 12%, transparent), transparent 65%)," +
-            "radial-gradient(1000px 620px at 96% 68%, color-mix(in oklab, var(--series-7) 12%, transparent), transparent 65%)," +
-            "radial-gradient(900px 560px at 50% 100%, color-mix(in oklab, var(--series-2) 10%, transparent), transparent 65%)",
-        }}
-      />
+      <AuroraBackground />
 
       <Header
         meta={meta}
@@ -84,29 +75,37 @@ export default function App() {
         </div>
 
         <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={1} title="סקירה כללית" />
           <InsightBanner records={filteredIgnoringDate} delayMs={0} />
           <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
           <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
         </div>
 
-        <Reveal id="trends" className="grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ scrollMarginTop: "112px" }}>
-          <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
-          <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
-          <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
-          <ProcessTypeStatusChart records={filtered} delayMs={240} />
+        <Reveal id="trends" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={2} title="מגמות ופילוחים" />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
+            <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
+            <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
+            <ProcessTypeStatusChart records={filtered} delayMs={240} />
+          </div>
         </Reveal>
 
-        <Reveal id="leaderboard" style={{ scrollMarginTop: "112px" }}>
+        <Reveal id="leaderboard" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={3} title="לוח מובילים" />
           <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
         </Reveal>
 
-        <Reveal id="activity" style={{ scrollMarginTop: "112px" }}>
+        <Reveal id="activity" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={4} title="פעילות אחרונה" />
           <RecentClosedList records={filtered} delayMs={0} />
         </Reveal>
-        <Reveal id="customers" style={{ scrollMarginTop: "112px" }}>
+        <Reveal id="customers" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={5} title="לקוחות" />
           <CustomersTable records={filtered} delayMs={0} />
         </Reveal>
-        <Reveal id="deals" style={{ scrollMarginTop: "112px" }}>
+        <Reveal id="deals" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={6} title="כל העסקאות" />
           <DataTable records={filtered} delayMs={0} />
         </Reveal>
 

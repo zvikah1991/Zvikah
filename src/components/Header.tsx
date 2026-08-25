@@ -27,9 +27,10 @@ export function Header({
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--page)]/85 backdrop-blur">
       <div
-        className="h-[3px]"
+        className="shimmer-line h-[3px]"
         style={{
-          background: "linear-gradient(90deg, var(--series-1), var(--brand-gold), var(--series-3), var(--series-7), var(--series-2))",
+          background:
+            "linear-gradient(90deg, var(--series-1), var(--brand-gold), var(--series-3), var(--series-7), var(--series-2), var(--series-1))",
         }}
         aria-hidden="true"
       />

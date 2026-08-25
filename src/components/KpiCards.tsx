@@ -6,6 +6,7 @@ import { formatCurrency, formatMonthKeyShort, formatNumber, formatPercent } from
 import { useCountUp } from "../hooks/useCountUp";
 import { loadKpiOrder, saveKpiOrder } from "../lib/storage";
 import { StatTile } from "./ui/StatTile";
+import { HeroStat } from "./ui/HeroStat";
 import { IconBriefcase, IconCheck, IconClock, IconCoins, IconGripDots, IconRotateCcw, IconTarget, IconTrendingUp, IconUsers, IconX } from "./ui/Icons";
 import clsx from "clsx";
 
@@ -176,7 +177,14 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const renderOrder = order.filter((id) => tiles[id]);
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-3">
+      <HeroStat
+        label="פרמיה נוכחית — לפי הסינון הנוכחי"
+        value={formatCurrency(premium)}
+        delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
+        sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
+        sparkline={premiumTrend}
+      />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
         {renderOrder.map((id, i) => {
           const tile = tiles[id]!;

@@ -1,7 +1,11 @@
-import type { ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import clsx from "clsx";
 import { Card } from "./Card";
 import { Sparkline } from "./Sparkline";
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 export function StatTile({
   label,
@@ -31,15 +35,34 @@ export function StatTile({
   sparkline?: number[];
 }) {
   const accentVar = accentColor ?? "var(--brand)";
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+  const [hovering, setHovering] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = wrapRef.current;
+    if (!el || prefersReducedMotion()) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ rx: py * -8, ry: px * 8 });
+  };
+  const handleMouseLeave = () => {
+    setTilt({ rx: 0, ry: 0 });
+    setHovering(false);
+  };
 
   return (
-    <Card
-      className={clsx("hover-lift animate-fade-up overflow-hidden p-4", className)}
-      style={{
-        ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
-        borderColor: `color-mix(in oklab, ${accentVar} 45%, var(--border))`,
-      }}
-    >
+    <div ref={wrapRef} onMouseMove={handleMouseMove} onMouseEnter={() => setHovering(true)} onMouseLeave={handleMouseLeave} style={{ perspective: "900px" }}>
+      <Card
+        className={clsx("animate-fade-up overflow-hidden p-4 transition-transform duration-200 ease-out", className)}
+        style={{
+          ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
+          borderColor: `color-mix(in oklab, ${accentVar} 45%, var(--border))`,
+          transform: `translateY(${hovering ? -4 : 0}px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+          filter: hovering ? `drop-shadow(0 18px 30px color-mix(in oklab, ${accentVar} 40%, transparent))` : undefined,
+        }}
+      >
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm text-[var(--text-secondary)]">{label}</span>
         {icon && (
@@ -81,6 +104,7 @@ export function StatTile({
         </div>
       )}
     </Card>
+    </div>
   );
 }
 

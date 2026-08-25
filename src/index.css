@@ -283,3 +283,169 @@ body {
     transform: none;
   }
 }
+
+/* ---- Aurora background: slow-drifting blurred color blobs behind the whole app ---- */
+.aurora-blob {
+  position: absolute;
+  width: 46vw;
+  height: 46vw;
+  max-width: 640px;
+  max-height: 640px;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+.aurora-blob-1 {
+  top: -14%;
+  left: 0%;
+  background: var(--series-1);
+  opacity: 0.55;
+}
+.aurora-blob-2 {
+  top: -16%;
+  right: -4%;
+  background: var(--brand-gold);
+  opacity: 0.5;
+}
+.aurora-blob-3 {
+  top: 38%;
+  left: -10%;
+  background: var(--series-3);
+  opacity: 0.4;
+}
+.aurora-blob-4 {
+  top: 52%;
+  right: -8%;
+  background: var(--series-7);
+  opacity: 0.4;
+}
+.aurora-blob-5 {
+  bottom: -20%;
+  left: 28%;
+  background: var(--series-2);
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aurora-blob-1 {
+    animation: aurora-drift-a 26s ease-in-out infinite;
+  }
+  .aurora-blob-2 {
+    animation: aurora-drift-b 32s ease-in-out infinite;
+  }
+  .aurora-blob-3 {
+    animation: aurora-drift-c 28s ease-in-out infinite;
+  }
+  .aurora-blob-4 {
+    animation: aurora-drift-a 24s ease-in-out infinite reverse;
+  }
+  .aurora-blob-5 {
+    animation: aurora-drift-b 36s ease-in-out infinite reverse;
+  }
+}
+
+@keyframes aurora-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6%, 8%) scale(1.12);
+  }
+}
+@keyframes aurora-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-7%, 5%) scale(0.92);
+  }
+}
+@keyframes aurora-drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(5%, -6%) scale(1.08);
+  }
+}
+
+/* Fine film-grain wash over the whole app for an editorial, printed finish. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ---- Cursor-follow spotlight glow, applied to every glass Card on hover ---- */
+:root {
+  --spotlight: color-mix(in oklab, var(--brand-gold) 55%, white 45%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --spotlight: color-mix(in oklab, white 65%, var(--brand-soft) 35%);
+  }
+}
+:root[data-theme="dark"] {
+  --spotlight: color-mix(in oklab, white 65%, var(--brand-soft) 35%);
+}
+
+.spotlight-overlay {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.group:hover .spotlight-overlay {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-overlay {
+    display: none;
+  }
+}
+
+/* ---- Animated gradient text, for hero headline numbers ---- */
+.gradient-text {
+  background: linear-gradient(90deg, var(--series-1), var(--brand-gold), var(--series-3), var(--series-7));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gradient-text {
+    animation: gradient-shift 8s ease infinite;
+  }
+}
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ---- Shimmering spectrum line, used on the header hairline and active nav tab ---- */
+.shimmer-line {
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shimmer-line {
+    animation: shimmer-line-move 6s linear infinite;
+  }
+}
+@keyframes shimmer-line-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
