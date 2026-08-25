@@ -5,6 +5,7 @@ import { statusBucket } from "../lib/statusBuckets";
 import { formatCurrency, formatDate, formatNumber } from "../lib/format";
 import { exportCustomersToCsv } from "../lib/csv";
 import { Card } from "./ui/Card";
+import { SectionTitle } from "./ui/SectionTitle";
 import { StatusPill } from "./ui/StatusPill";
 import { IconDownload } from "./ui/Icons";
 
@@ -58,8 +59,8 @@ export function CustomersTable({ records, delayMs }: { records: SalesRecord[]; d
     <Card className="animate-fade-up overflow-hidden" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] p-4">
         <div>
-          <h3 className="text-sm font-semibold">כל הלקוחות ({formatNumber(customers.length)})</h3>
-          <p className="text-xs text-[var(--text-muted)]">מרוכז לפי לקוח — כולל כל העסקאות שלו</p>
+          <SectionTitle>כל הלקוחות ({formatNumber(customers.length)})</SectionTitle>
+          <p className="mt-0.5 text-xs text-[var(--text-muted)]">מרוכז לפי לקוח — כולל כל העסקאות שלו</p>
         </div>
         <button
           type="button"

@@ -54,11 +54,14 @@ export default function App() {
     <div className="relative min-h-screen isolate">
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[560px]"
+        className="pointer-events-none fixed inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(900px 420px at 12% -12%, color-mix(in oklab, var(--brand) 9%, transparent), transparent 60%)," +
-            "radial-gradient(900px 420px at 88% -12%, color-mix(in oklab, var(--brand-gold) 10%, transparent), transparent 60%)",
+            "radial-gradient(1100px 620px at 6% -10%, color-mix(in oklab, var(--series-1) 16%, transparent), transparent 60%)," +
+            "radial-gradient(900px 560px at 94% -8%, color-mix(in oklab, var(--brand-gold) 20%, transparent), transparent 60%)," +
+            "radial-gradient(1000px 620px at 12% 55%, color-mix(in oklab, var(--series-3) 12%, transparent), transparent 65%)," +
+            "radial-gradient(1000px 620px at 96% 68%, color-mix(in oklab, var(--series-7) 12%, transparent), transparent 65%)," +
+            "radial-gradient(900px 560px at 50% 100%, color-mix(in oklab, var(--series-2) 10%, transparent), transparent 65%)",
         }}
       />
 

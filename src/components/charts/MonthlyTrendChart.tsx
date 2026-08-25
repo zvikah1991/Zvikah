@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { SalesRecord } from "../../types";
 import { monthlyTrend } from "../../lib/aggregations";
@@ -15,6 +15,7 @@ const MONTHS_BACK_OPTIONS = [
 ];
 
 export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
+  const gradientId = `trend-bar-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const [metric, setMetric] = useState<"premium" | "count">("premium");
   const [monthsBack, setMonthsBack] = useState<string>("12");
   // Bar value labels need real horizontal room per bar — on narrow screens they overlap, so
@@ -66,6 +67,12 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={trend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--series-1)" stopOpacity={1} />
+                    <stop offset="100%" stopColor="var(--series-1)" stopOpacity={0.55} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid vertical={false} stroke="var(--grid)" />
                 <XAxis
                   dataKey="monthKey"
@@ -95,7 +102,7 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
                 <Bar
                   dataKey={metric}
                   name={metric === "premium" ? "פרמיה" : "עסקאות"}
-                  fill="var(--series-1)"
+                  fill={`url(#${gradientId})`}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={44}
                   animationBegin={(delayMs ?? 0) + 150}

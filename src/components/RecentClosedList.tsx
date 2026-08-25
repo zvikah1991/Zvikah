@@ -4,6 +4,7 @@ import { recentClosedDeals } from "../lib/customers";
 import { statusBucket } from "../lib/statusBuckets";
 import { formatCurrency, formatDate } from "../lib/format";
 import { Card } from "./ui/Card";
+import { SectionTitle } from "./ui/SectionTitle";
 import { IconCheck } from "./ui/Icons";
 
 export function RecentClosedList({ records, delayMs }: { records: SalesRecord[]; delayMs?: number }) {
@@ -11,8 +12,8 @@ export function RecentClosedList({ records, delayMs }: { records: SalesRecord[];
 
   return (
     <Card className="animate-fade-up p-4" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
-      <h3 className="text-sm font-semibold">לקוחות שנסגרו לאחרונה</h3>
-      <p className="text-xs text-[var(--text-muted)]">10 העסקאות האחרונות שהופקו / הושלמו</p>
+      <SectionTitle>לקוחות שנסגרו לאחרונה</SectionTitle>
+      <p className="mt-0.5 text-xs text-[var(--text-muted)]">10 העסקאות האחרונות שהופקו / הושלמו</p>
 
       <ul className="mt-3 flex flex-col gap-1">
         {deals.map((r, i) => (

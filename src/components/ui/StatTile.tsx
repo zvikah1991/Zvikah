@@ -44,15 +44,19 @@ export function StatTile({
         <span className="text-sm text-[var(--text-secondary)]">{label}</span>
         {icon && (
           <span
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg"
-            style={{ background: `color-mix(in oklab, ${accentVar} 16%, transparent)`, color: accentVar }}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg"
+            style={{
+              background: `color-mix(in oklab, ${accentVar} 18%, transparent)`,
+              color: accentVar,
+              boxShadow: `0 0 0 1px color-mix(in oklab, ${accentVar} 35%, transparent), 0 6px 16px -6px color-mix(in oklab, ${accentVar} 65%, transparent)`,
+            }}
           >
             {icon}
           </span>
         )}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-2xl font-semibold tabular-nums">{value}</span>
+        <span className="text-[28px] font-extrabold tracking-tight tabular-nums">{value}</span>
         {delta && delta.pct !== null && <DeltaBadge pct={delta.pct} positiveIsGood={delta.positiveIsGood ?? true} />}
       </div>
       {sub && <div className="mt-1 text-xs text-[var(--text-muted)]">{sub}</div>}

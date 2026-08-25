@@ -27,15 +27,21 @@ export function Header({
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--page)]/85 backdrop-blur">
       <div
-        className="h-[2px]"
-        style={{ background: "linear-gradient(90deg, transparent, var(--brand-gold), transparent)" }}
+        className="h-[3px]"
+        style={{
+          background: "linear-gradient(90deg, var(--series-1), var(--brand-gold), var(--series-3), var(--series-7), var(--series-2))",
+        }}
         aria-hidden="true"
       />
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2.5">
           <div
-            className="grid h-9 w-9 place-items-center rounded-xl text-white shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_var(--brand-gold-soft)]"
-            style={{ background: "linear-gradient(135deg, var(--brand), var(--brand-soft))" }}
+            className="grid h-9 w-9 place-items-center rounded-xl text-white"
+            style={{
+              background: "linear-gradient(135deg, var(--brand), var(--brand-soft))",
+              boxShadow:
+                "0 1px 2px rgba(0,0,0,0.15), 0 0 0 1px var(--brand-gold-soft), 0 6px 18px -4px color-mix(in oklab, var(--brand) 60%, transparent)",
+            }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 17l6-6 4 4 7-8" />

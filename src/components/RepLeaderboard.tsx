@@ -5,6 +5,7 @@ import { groupByField } from "../lib/aggregations";
 import type { SalesRecord } from "../types";
 import { formatCurrency, formatNumber } from "../lib/format";
 import { Card } from "./ui/Card";
+import { SectionTitle } from "./ui/SectionTitle";
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
@@ -42,7 +43,7 @@ function LeaderboardCard({ title, rows, delayMs }: { title: string; rows: Catego
 
   return (
     <Card className="hover-lift animate-fade-up p-4" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
-      <h3 className="text-sm font-semibold">{title}</h3>
+      <SectionTitle>{title}</SectionTitle>
 
       {podium.length === 0 ? (
         <div className="grid h-32 place-items-center text-sm text-[var(--text-muted)]">אין נתונים להצגה</div>

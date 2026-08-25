@@ -3,6 +3,7 @@ import type { SalesRecord } from "../types";
 import { formatCurrency, formatDate, formatNumber } from "../lib/format";
 import { exportRecordsToCsv } from "../lib/csv";
 import { Card } from "./ui/Card";
+import { SectionTitle } from "./ui/SectionTitle";
 import { StatusPill } from "./ui/StatusPill";
 import { IconDownload } from "./ui/Icons";
 
@@ -60,8 +61,8 @@ export function DataTable({ records, delayMs }: { records: SalesRecord[]; delayM
     <Card className="animate-fade-up overflow-hidden" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] p-4">
         <div>
-          <h3 className="text-sm font-semibold">כל העסקאות ({formatNumber(records.length)})</h3>
-          <p className="text-xs text-[var(--text-muted)]">כל תהליך בנפרד · לחיצה על כותרת עמודה ממיינת את הטבלה</p>
+          <SectionTitle>כל העסקאות ({formatNumber(records.length)})</SectionTitle>
+          <p className="mt-0.5 text-xs text-[var(--text-muted)]">כל תהליך בנפרד · לחיצה על כותרת עמודה ממיינת את הטבלה</p>
         </div>
         <button
           type="button"

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import clsx from "clsx";
 import { Card } from "../ui/Card";
+import { SectionTitle } from "../ui/SectionTitle";
 
 export interface ChartTableRow {
   key: string;
@@ -30,8 +31,8 @@ export function ChartCard({
     <Card className={clsx("hover-lift animate-fade-up p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>
-          {subtitle && <p className="text-xs text-[var(--text-muted)]">{subtitle}</p>}
+          <SectionTitle>{title}</SectionTitle>
+          {subtitle && <p className="mt-0.5 text-xs text-[var(--text-muted)]">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-2">
           {toggle}
