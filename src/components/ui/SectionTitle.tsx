@@ -6,7 +6,7 @@ export function SectionTitle({ children }: { children: ReactNode }) {
     <h3 className="flex items-center gap-2 text-base font-bold tracking-tight text-[var(--text-primary)]">
       <span
         className="h-4 w-1 shrink-0 rounded-full"
-        style={{ background: "linear-gradient(var(--series-1), var(--brand-gold))" }}
+        style={{ background: "linear-gradient(var(--brand), var(--brand-gold))" }}
         aria-hidden="true"
       />
       {children}

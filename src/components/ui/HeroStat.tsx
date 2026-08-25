@@ -37,7 +37,7 @@ export function HeroStat({
         </div>
         {sparkline && sparkline.length >= 2 && (
           <div className="h-16 w-full max-w-sm sm:w-72">
-            <Sparkline data={sparkline} color="var(--series-1)" height={56} />
+            <Sparkline data={sparkline} color="var(--brand)" height={56} />
           </div>
         )}
       </div>

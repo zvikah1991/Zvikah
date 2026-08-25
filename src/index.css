@@ -284,7 +284,7 @@ body {
   }
 }
 
-/* ---- Aurora background: slow-drifting blurred color blobs behind the whole app ---- */
+/* ---- Ambient background: two slow-drifting brand-color blobs (navy + gold only) behind the whole app ---- */
 .aurora-blob {
   position: absolute;
   width: 46vw;
@@ -292,55 +292,37 @@ body {
   max-width: 640px;
   max-height: 640px;
   border-radius: 9999px;
-  filter: blur(90px);
+  filter: blur(110px);
   will-change: transform;
 }
 .aurora-blob-1 {
-  top: -14%;
-  left: 0%;
-  background: var(--series-1);
-  opacity: 0.55;
+  top: -18%;
+  left: -4%;
+  background: var(--brand);
+  opacity: 0.2;
 }
 .aurora-blob-2 {
-  top: -16%;
-  right: -4%;
+  top: -14%;
+  right: -8%;
   background: var(--brand-gold);
-  opacity: 0.5;
+  opacity: 0.16;
 }
 .aurora-blob-3 {
-  top: 38%;
-  left: -10%;
-  background: var(--series-3);
-  opacity: 0.4;
-}
-.aurora-blob-4 {
-  top: 52%;
-  right: -8%;
-  background: var(--series-7);
-  opacity: 0.4;
-}
-.aurora-blob-5 {
-  bottom: -20%;
-  left: 28%;
-  background: var(--series-2);
-  opacity: 0.32;
+  bottom: -22%;
+  left: 22%;
+  background: var(--brand-soft);
+  opacity: 0.12;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .aurora-blob-1 {
-    animation: aurora-drift-a 26s ease-in-out infinite;
+    animation: aurora-drift-a 30s ease-in-out infinite;
   }
   .aurora-blob-2 {
-    animation: aurora-drift-b 32s ease-in-out infinite;
+    animation: aurora-drift-b 34s ease-in-out infinite;
   }
   .aurora-blob-3 {
-    animation: aurora-drift-c 28s ease-in-out infinite;
-  }
-  .aurora-blob-4 {
-    animation: aurora-drift-a 24s ease-in-out infinite reverse;
-  }
-  .aurora-blob-5 {
-    animation: aurora-drift-b 36s ease-in-out infinite reverse;
+    animation: aurora-drift-c 38s ease-in-out infinite;
   }
 }
 
@@ -407,45 +389,10 @@ body {
   }
 }
 
-/* ---- Animated gradient text, for hero headline numbers ---- */
+/* ---- Brand gradient text, for the hero headline number. Static — a number shouldn't visibly shift color while read. ---- */
 .gradient-text {
-  background: linear-gradient(90deg, var(--series-1), var(--brand-gold), var(--series-3), var(--series-7));
-  background-size: 300% auto;
+  background: linear-gradient(90deg, var(--brand), var(--brand-gold));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .gradient-text {
-    animation: gradient-shift 8s ease infinite;
-  }
-}
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* ---- Shimmering spectrum line, used on the header hairline and active nav tab ---- */
-.shimmer-line {
-  background-size: 200% 100%;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .shimmer-line {
-    animation: shimmer-line-move 6s linear infinite;
-  }
-}
-@keyframes shimmer-line-move {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
 }
