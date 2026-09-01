@@ -1,13 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { SalesRecord } from "../types";
 import { computeRepCommissions } from "../lib/aggregations";
 import { statusBucket } from "../lib/statusBuckets";
-import { formatCurrency, currentMonthKey, monthRangeISO, todayISO, formatMonthKey } from "../lib/format";
+import { formatCurrency, currentMonthKey, monthKeyOf, monthRangeISO, formatMonthKey } from "../lib/format";
 import { Card } from "./ui/Card";
 import { SectionTitle } from "./ui/SectionTitle";
 
-function inCurrentMonth(records: SalesRecord[], monthFrom: string, today: string): SalesRecord[] {
-  return records.filter((r) => r.requiredDate && r.requiredDate >= monthFrom && r.requiredDate <= today);
+function inMonth(records: SalesRecord[], from: string, to: string): SalesRecord[] {
+  return records.filter((r) => r.requiredDate && r.requiredDate >= from && r.requiredDate <= to);
 }
 
 export function CommissionTable({
@@ -19,28 +19,51 @@ export function CommissionTable({
   agentAppointmentRecords: SalesRecord[];
   delayMs?: number;
 }) {
-  const monthKey = currentMonthKey();
+  const monthOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const r of coreRecords) if (r.requiredDate) set.add(monthKeyOf(r.requiredDate));
+    for (const r of agentAppointmentRecords) if (r.requiredDate) set.add(monthKeyOf(r.requiredDate));
+    return Array.from(set).sort().reverse();
+  }, [coreRecords, agentAppointmentRecords]);
+
+  const defaultMonth = monthOptions.includes(currentMonthKey()) ? currentMonthKey() : (monthOptions[0] ?? currentMonthKey());
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
+  // Falls back gracefully if the underlying data changed (e.g. a new upload) and the previous selection no longer exists.
+  const activeMonth = monthOptions.includes(selectedMonth) ? selectedMonth : defaultMonth;
 
   const rows = useMemo(() => {
-    const { from } = monthRangeISO(monthKey);
-    const today = todayISO();
-    return computeRepCommissions(inCurrentMonth(coreRecords, from, today), inCurrentMonth(agentAppointmentRecords, from, today), statusBucket);
-  }, [coreRecords, agentAppointmentRecords, monthKey]);
+    const { from, to } = monthRangeISO(activeMonth);
+    return computeRepCommissions(inMonth(coreRecords, from, to), inMonth(agentAppointmentRecords, from, to), statusBucket);
+  }, [coreRecords, agentAppointmentRecords, activeMonth]);
 
   const totalBonus = rows.reduce((sum, r) => sum + r.totalCommission, 0);
 
   return (
     <Card className="animate-fade-up overflow-hidden p-4" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
         <div>
-          <SectionTitle>עמלות נציגים — {formatMonthKey(monthKey)}</SectionTitle>
+          <SectionTitle>עמלות נציגים</SectionTitle>
           <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-            פרמיה שהופקה החודש × מדרגת העמלה, ועוד חצי עמלה על פרמיית מינוי סוכן · לא כולל את בעל הסוכנות
+            פרמיה שהופקה בחודש הנבחר × מדרגת העמלה, ועוד חצי עמלה על פרמיית מינוי סוכן · לא כולל את בעל הסוכנות · ניתן לחזור רטרואקטיבית לכל חודש
           </p>
         </div>
-        <div className="text-end">
-          <div className="text-xs text-[var(--text-muted)]">סה״כ עמלות החודש</div>
-          <div className="text-lg font-bold tabular-nums">{formatCurrency(totalBonus)}</div>
+        <div className="flex items-center gap-3">
+          <select
+            value={activeMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-sm outline-none"
+          >
+            {monthOptions.length === 0 && <option value={activeMonth}>{formatMonthKey(activeMonth)}</option>}
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>
+                {formatMonthKey(m)}
+              </option>
+            ))}
+          </select>
+          <div className="text-end">
+            <div className="text-xs text-[var(--text-muted)]">סה״כ עמלות</div>
+            <div className="text-lg font-bold tabular-nums">{formatCurrency(totalBonus)}</div>
+          </div>
         </div>
       </div>
 
@@ -72,7 +95,7 @@ export function CommissionTable({
             {rows.length === 0 && (
               <tr>
                 <td colSpan={7} className="py-6 text-center text-[var(--text-muted)]">
-                  אין נתונים לחודש הנוכחי
+                  אין נתונים לחודש שנבחר
                 </td>
               </tr>
             )}
