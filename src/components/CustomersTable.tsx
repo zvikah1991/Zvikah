@@ -7,6 +7,7 @@ import { exportCustomersToCsv } from "../lib/csv";
 import { Card } from "./ui/Card";
 import { SectionTitle } from "./ui/SectionTitle";
 import { StatusPill } from "./ui/StatusPill";
+import { Pagination } from "./ui/Pagination";
 import { IconDownload } from "./ui/Icons";
 
 type SortKey = "customer" | "dealCount" | "totalPremium" | "lastDate";
@@ -108,29 +109,7 @@ export function CustomersTable({ records, delayMs }: { records: SalesRecord[]; d
         </table>
       </div>
 
-      <div className="flex items-center justify-between gap-2 p-3 text-sm">
-        <span className="text-[var(--text-muted)]">
-          עמוד {formatNumber(clampedPage + 1)} מתוך {formatNumber(pageCount)}
-        </span>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            disabled={clampedPage === 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="rounded-lg border border-[var(--border)] px-3 py-1 disabled:opacity-40"
-          >
-            הקודם
-          </button>
-          <button
-            type="button"
-            disabled={clampedPage >= pageCount - 1}
-            onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
-            className="rounded-lg border border-[var(--border)] px-3 py-1 disabled:opacity-40"
-          >
-            הבא
-          </button>
-        </div>
-      </div>
+      <Pagination page={clampedPage} pageCount={pageCount} onChange={setPage} />
     </Card>
   );
 }

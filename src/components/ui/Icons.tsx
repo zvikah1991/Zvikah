@@ -147,3 +147,11 @@ export function IconRotateCcw({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconChevron({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}

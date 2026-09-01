@@ -59,7 +59,10 @@ export function MultiSelect({
       </button>
 
       {open && (
-        <div className="absolute z-20 mt-1.5 max-h-72 w-56 overflow-auto rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-lg scrollbar-thin">
+        <div
+          className="animate-fade-up absolute z-20 mt-1.5 max-h-72 w-56 overflow-auto rounded-xl border border-[var(--border)] p-1.5 backdrop-blur-xl scrollbar-thin"
+          style={{ background: "color-mix(in oklab, var(--surface) 92%, transparent)", boxShadow: "var(--shadow-lg)", animationDuration: "0.18s" }}
+        >
           {options.length === 0 && <div className="px-2 py-1.5 text-sm text-[var(--text-muted)]">אין אפשרויות</div>}
           {options.map((opt) => {
             const checked = selected.includes(opt);

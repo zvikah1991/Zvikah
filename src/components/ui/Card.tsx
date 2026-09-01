@@ -29,8 +29,7 @@ export function Card({
         background: "color-mix(in oklab, var(--surface) 80%, transparent)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        boxShadow:
-          "inset 0 1px 0 color-mix(in oklab, white 30%, transparent), 0 1px 2px rgba(0,0,0,0.05), 0 24px 48px -20px rgba(0,0,0,0.28)",
+        boxShadow: "inset 0 1px 0 color-mix(in oklab, white 30%, transparent), var(--shadow-md)",
         ...style,
       }}
     >

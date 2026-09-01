@@ -1,3 +1,4 @@
+import { AGENCY_NAME } from "../../config";
 import { Card } from "./Card";
 import { Sparkline } from "./Sparkline";
 
@@ -21,6 +22,13 @@ export function HeroStat({
 
   return (
     <Card className="animate-fade-up overflow-hidden p-6 sm:p-8">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-10 -end-4 font-serif text-[11rem] leading-none font-bold select-none"
+        style={{ color: "var(--brand)", opacity: 0.05 }}
+      >
+        {AGENCY_NAME.charAt(0)}
+      </span>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
