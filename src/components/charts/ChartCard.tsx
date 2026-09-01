@@ -34,7 +34,7 @@ export function ChartCard({
           <SectionTitle>{title}</SectionTitle>
           {subtitle && <p className="mt-0.5 text-xs text-[var(--text-muted)]">{subtitle}</p>}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {toggle}
           <div className="flex rounded-lg border border-[var(--border)] p-0.5 text-xs">
             <button

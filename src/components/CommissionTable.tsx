@@ -88,7 +88,7 @@ export function CommissionTable({
                 <td className="py-1.5 pe-3 text-end tabular-nums text-[var(--text-secondary)]">
                   ×{r.multiplier}
                   {r.isManualMultiplier && (
-                    <span className="ms-1 rounded px-1 py-0.5 text-[10px] font-medium text-[var(--brand-gold)]" title="מדרגה ידנית, לא מהטבלה הרגילה">
+                    <span className="ms-1 rounded px-1 py-0.5 text-[10px] font-medium text-[var(--status-warning)]" title="מדרגה ידנית, לא מהטבלה הרגילה">
                       ידני
                     </span>
                   )}

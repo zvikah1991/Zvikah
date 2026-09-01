@@ -7,7 +7,7 @@ import { buildColorScale } from "./lib/colorScale";
 import { currentMonthKey, monthRangeISO } from "./lib/format";
 import { AGENT_APPOINTMENT_PROCESS_TYPES, CORE_PROCESS_TYPES } from "./config";
 import { Header } from "./components/Header";
-import { SectionNav } from "./components/SectionNav";
+import { Sidebar } from "./components/Sidebar";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
 import { InsightBanner } from "./components/InsightBanner";
@@ -24,8 +24,9 @@ import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
 import { ErrorBanner } from "./components/ui/ErrorBanner";
 import { Reveal } from "./components/ui/Reveal";
-import { AuroraBackground } from "./components/ui/AuroraBackground";
 import { SectionHeading } from "./components/ui/SectionHeading";
+
+const SCROLL_MARGIN = "scroll-mt-32 lg:scroll-mt-20";
 
 export default function App() {
   const { records, meta, uploadFile, resetToSeed, isUploading, isUsingSeed, error, clearError } = useSalesData();
@@ -55,74 +56,75 @@ export default function App() {
   const insurerColorScale = useMemo(() => buildColorScale(groupByField(coreRecords, "insurer")), [coreRecords]);
 
   return (
-    <div className="relative min-h-screen isolate">
-      <AuroraBackground />
+    <div className="min-h-screen bg-[var(--page)] lg:flex">
+      <Sidebar />
 
-      <Header
-        meta={meta}
-        isUsingSeed={isUsingSeed}
-        isUploading={isUploading}
-        onUpload={uploadFile}
-        onReset={resetToSeed}
-        theme={theme}
-        onToggleTheme={toggle}
-      />
-      <SectionNav />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Header
+          meta={meta}
+          isUsingSeed={isUsingSeed}
+          isUploading={isUploading}
+          onUpload={uploadFile}
+          onReset={resetToSeed}
+          theme={theme}
+          onToggleTheme={toggle}
+        />
 
-      <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6">
-        {error && <ErrorBanner message={error} onDismiss={clearError} />}
+        <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
+          {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3">
-          <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
-        </div>
-
-        <div id="overview" className="flex flex-col gap-4" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={1} title="סקירה כללית" />
-          <InsightBanner records={filteredIgnoringDate} delayMs={0} />
-          <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-          <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={380} />
-        </div>
-
-        <Reveal id="trends" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={2} title="מגמות ופילוחים" />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
-            <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
-            <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
-            <ProcessTypeStatusChart records={filtered} delayMs={240} />
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3" style={{ boxShadow: "var(--shadow-sm)" }}>
+            <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
           </div>
-        </Reveal>
 
-        <Reveal id="leaderboard" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={3} title="לוח מובילים" />
-          <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
-        </Reveal>
-
-        <Reveal id="commissions" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={4} title="עמלות" />
-          <CommissionTable coreRecords={coreRecords} agentAppointmentRecords={agentAppointmentRecords} delayMs={0} />
-        </Reveal>
-
-        <Reveal id="activity" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={5} title="פעילות אחרונה" />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <OverdueDealsList records={filtered} delayMs={0} />
-            <RecentClosedList records={filtered} delayMs={60} />
+          <div id="overview" className={`flex flex-col gap-4 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="סקירה כללית" />
+            <InsightBanner records={filteredIgnoringDate} delayMs={0} />
+            <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
+            <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={0} />
           </div>
-        </Reveal>
-        <Reveal id="customers" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={6} title="לקוחות" />
-          <CustomersTable records={filtered} delayMs={0} />
-        </Reveal>
-        <Reveal id="deals" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={7} title="כל העסקאות" />
-          <DataTable records={filtered} delayMs={0} />
-        </Reveal>
 
-        <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
-          הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport
-        </footer>
-      </main>
+          <Reveal id="trends" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="מגמות ופילוחים" />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <MonthlyTrendChart records={filteredIgnoringDate} delayMs={0} />
+              <RepByMonthChart records={filteredIgnoringDate} colorScale={repColorScale} delayMs={80} />
+              <RankedBarChart title="מכירות לפי חברות ביטוח" records={filtered} field="insurer" colorScale={insurerColorScale} topN={6} delayMs={160} />
+              <ProcessTypeStatusChart records={filtered} delayMs={240} />
+            </div>
+          </Reveal>
+
+          <Reveal id="leaderboard" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="לוח מובילים" />
+            <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
+          </Reveal>
+
+          <Reveal id="commissions" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="עמלות" />
+            <CommissionTable coreRecords={coreRecords} agentAppointmentRecords={agentAppointmentRecords} delayMs={0} />
+          </Reveal>
+
+          <Reveal id="activity" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="פעילות אחרונה" />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <OverdueDealsList records={filtered} delayMs={0} />
+              <RecentClosedList records={filtered} delayMs={60} />
+            </div>
+          </Reveal>
+          <Reveal id="customers" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="לקוחות" />
+            <CustomersTable records={filtered} delayMs={0} />
+          </Reveal>
+          <Reveal id="deals" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
+            <SectionHeading title="כל העסקאות" />
+            <DataTable records={filtered} delayMs={0} />
+          </Reveal>
+
+          <footer className="py-4 text-center text-xs text-[var(--text-muted)]">
+            הנתונים מוצגים לצרכי ניהול פנימי בלבד · מקור: דו״ח WorkflowsExport
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }

@@ -88,7 +88,7 @@ export function RepByMonthChart({
       title="מכירות לפי נציג — חודשי"
       subtitle={subtitle}
       toggle={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <select
             value={selectedMonth}
             onChange={(e) => setMonth(e.target.value)}

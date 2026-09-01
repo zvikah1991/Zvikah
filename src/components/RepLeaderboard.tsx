@@ -77,7 +77,7 @@ function LeaderboardCard({ title, rows, delayMs }: { title: string; rows: Catego
 }
 
 const RANK_STYLES: Record<1 | 2 | 3, { bg: string; border: string; lift: string }> = {
-  1: { bg: "linear-gradient(135deg, #e9c874, var(--brand-gold))", border: "border-[var(--brand-gold)]/50", lift: "" },
+  1: { bg: "linear-gradient(135deg, #f0d38a, #c9a227)", border: "border-[#c9a227]/50", lift: "" },
   2: { bg: "linear-gradient(135deg, #d8dde3, #9aa3ad)", border: "border-[var(--border)]", lift: "" },
   3: { bg: "linear-gradient(135deg, #d8a878, #a9723f)", border: "border-[var(--border)]", lift: "" },
 };
@@ -91,7 +91,7 @@ function PodiumTile({ rank, entry, className }: { rank: 1 | 2 | 3; entry?: Categ
       className={clsx(
         "flex flex-1 flex-col items-center gap-1 rounded-xl border p-2.5 text-center",
         style.border,
-        rank === 1 ? "bg-[color-mix(in_oklab,var(--brand-gold)_6%,var(--surface))]" : "bg-[var(--surface)]",
+        rank === 1 ? "bg-[color-mix(in_oklab,#c9a227_6%,var(--surface))]" : "bg-[var(--surface)]",
         className,
       )}
     >

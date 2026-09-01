@@ -60,8 +60,8 @@ export function MultiSelect({
 
       {open && (
         <div
-          className="animate-fade-up absolute z-20 mt-1.5 max-h-72 w-56 overflow-auto rounded-xl border border-[var(--border)] p-1.5 backdrop-blur-xl scrollbar-thin"
-          style={{ background: "color-mix(in oklab, var(--surface) 92%, transparent)", boxShadow: "var(--shadow-lg)", animationDuration: "0.18s" }}
+          className="animate-fade-up absolute z-20 mt-1.5 max-h-72 w-56 overflow-auto rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 scrollbar-thin"
+          style={{ boxShadow: "var(--shadow-lg)", animationDuration: "0.15s" }}
         >
           {options.length === 0 && <div className="px-2 py-1.5 text-sm text-[var(--text-muted)]">אין אפשרויות</div>}
           {options.map((opt) => {
@@ -85,7 +85,7 @@ export function MultiSelect({
             <button
               type="button"
               onClick={() => onChange([])}
-              className="mt-1 w-full rounded-lg px-2 py-1.5 text-start text-xs text-[var(--series-8)] hover:bg-[var(--surface-2)]"
+              className="mt-1 w-full rounded-lg px-2 py-1.5 text-start text-xs text-[var(--status-critical)] hover:bg-[var(--surface-2)]"
             >
               נקה בחירה
             </button>

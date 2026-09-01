@@ -1,11 +1,7 @@
-import { useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import clsx from "clsx";
 import { Card } from "./Card";
 import { Sparkline } from "./Sparkline";
-
-function prefersReducedMotion(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 export function StatTile({
   label,
@@ -22,7 +18,7 @@ export function StatTile({
   label: string;
   value: string;
   sub?: string;
-  /** CSS color (or var()) used for this tile's border, icon badge, and progress/sparkline accent. */
+  /** CSS color (or var()) for this tile's icon and top accent bar. */
   accentColor?: string;
   delta?: { pct: number | null; positiveIsGood?: boolean } | null;
   icon?: ReactNode;
@@ -35,51 +31,26 @@ export function StatTile({
   sparkline?: number[];
 }) {
   const accentVar = accentColor ?? "var(--brand)";
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
-  const [hovering, setHovering] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = wrapRef.current;
-    if (!el || prefersReducedMotion()) return;
-    const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ rx: py * -8, ry: px * 8 });
-  };
-  const handleMouseLeave = () => {
-    setTilt({ rx: 0, ry: 0 });
-    setHovering(false);
-  };
 
   return (
-    <div ref={wrapRef} onMouseMove={handleMouseMove} onMouseEnter={() => setHovering(true)} onMouseLeave={handleMouseLeave} style={{ perspective: "900px" }}>
-      <Card
-        className={clsx("animate-fade-up overflow-hidden p-4 transition-transform duration-200 ease-out", className)}
-        style={{
-          ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
-          borderColor: `color-mix(in oklab, ${accentVar} 45%, var(--border))`,
-          transform: `translateY(${hovering ? -4 : 0}px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
-          filter: hovering ? `drop-shadow(0 18px 30px color-mix(in oklab, ${accentVar} 40%, transparent))` : undefined,
-        }}
-      >
+    <Card
+      className={clsx("hover-lift animate-fade-up overflow-hidden p-4", className)}
+      style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}
+    >
+      <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: accentVar }} aria-hidden="true" />
       <div className="flex items-start justify-between gap-2">
-        <span className="text-sm text-[var(--text-secondary)]">{label}</span>
+        <span className="text-xs font-medium text-[var(--text-muted)]">{label}</span>
         {icon && (
           <span
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg"
-            style={{
-              background: `color-mix(in oklab, ${accentVar} 18%, transparent)`,
-              color: accentVar,
-              boxShadow: `0 0 0 1px color-mix(in oklab, ${accentVar} 35%, transparent), 0 6px 16px -6px color-mix(in oklab, ${accentVar} 65%, transparent)`,
-            }}
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg"
+            style={{ background: `color-mix(in oklab, ${accentVar} 12%, transparent)`, color: accentVar }}
           >
             {icon}
           </span>
         )}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-[28px] font-extrabold tracking-tight tabular-nums">{value}</span>
+        <span className="text-[26px] font-bold tracking-tight tabular-nums text-[var(--text-primary)]">{value}</span>
         {delta && delta.pct !== null && <DeltaBadge pct={delta.pct} positiveIsGood={delta.positiveIsGood ?? true} />}
       </div>
       {sub && <div className="mt-1 text-xs text-[var(--text-muted)]">{sub}</div>}
@@ -104,7 +75,6 @@ export function StatTile({
         </div>
       )}
     </Card>
-    </div>
   );
 }
 

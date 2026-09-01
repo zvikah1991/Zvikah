@@ -24,16 +24,16 @@ export function HeroStat({
     <Card className="animate-fade-up overflow-hidden p-6 sm:p-8">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-10 -end-4 font-serif text-[11rem] leading-none font-bold select-none"
-        style={{ color: "var(--brand)", opacity: 0.05 }}
+        className="pointer-events-none absolute -bottom-10 -end-6 text-[11rem] leading-none font-extrabold select-none"
+        style={{ color: "var(--brand)", opacity: 0.04 }}
       >
         {AGENCY_NAME.charAt(0)}
       </span>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
-          <div className="mt-1 flex flex-wrap items-baseline gap-3">
-            <span className="gradient-text font-serif text-5xl font-bold tracking-tight sm:text-6xl">{value}</span>
+          <p className="text-xs font-medium text-[var(--text-muted)]">{label}</p>
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-3">
+            <span className="text-5xl font-bold tracking-tight text-[var(--brand)] tabular-nums sm:text-6xl">{value}</span>
             {delta && delta.pct !== null && (
               <span className="flex items-center gap-1 text-base font-semibold tabular-nums" style={{ color: deltaColor }}>
                 <span className="text-sm">{isPositive ? "▲" : "▼"}</span>

@@ -8,6 +8,7 @@ import { Card } from "./ui/Card";
 import { SectionTitle } from "./ui/SectionTitle";
 import { StatusPill } from "./ui/StatusPill";
 import { Pagination } from "./ui/Pagination";
+import { Button } from "./ui/Button";
 import { IconDownload } from "./ui/Icons";
 
 type SortKey = "customer" | "dealCount" | "totalPremium" | "lastDate";
@@ -63,14 +64,10 @@ export function CustomersTable({ records, delayMs }: { records: SalesRecord[]; d
           <SectionTitle>כל הלקוחות ({formatNumber(customers.length)})</SectionTitle>
           <p className="mt-0.5 text-xs text-[var(--text-muted)]">מרוכז לפי לקוח — כולל כל העסקאות שלו</p>
         </div>
-        <button
-          type="button"
-          onClick={() => exportCustomersToCsv(sorted, `customers-export-${new Date().toISOString().slice(0, 10)}.csv`)}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--surface-2)]"
-        >
+        <Button variant="secondary" size="sm" onClick={() => exportCustomersToCsv(sorted, `customers-export-${new Date().toISOString().slice(0, 10)}.csv`)}>
           <IconDownload className="h-4 w-4" />
           ייצוא ל-CSV
-        </button>
+        </Button>
       </div>
 
       <div className="overflow-x-auto scrollbar-thin">

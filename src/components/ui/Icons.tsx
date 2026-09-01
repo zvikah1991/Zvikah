@@ -155,3 +155,46 @@ export function IconChevron({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconHome({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M4 11.5L12 4l8 7.5" />
+      <path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" />
+    </svg>
+  );
+}
+
+export function IconBarChart({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M4 20V10" />
+      <path d="M12 20V4" />
+      <path d="M20 20v-7" />
+    </svg>
+  );
+}
+
+export function IconTrophy({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M7 4h10v5a5 5 0 0 1-10 0V4z" />
+      <path d="M7 5H4v2a3 3 0 0 0 3 3" />
+      <path d="M17 5h3v2a3 3 0 0 1-3 3" />
+      <path d="M10 15.5V18" />
+      <path d="M14 15.5V18" />
+      <path d="M8 20h8" />
+      <path d="M9 18h6v2H9z" />
+    </svg>
+  );
+}
+
+export function IconPercent({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <path d="M5 19L19 5" />
+      <circle cx="7" cy="7" r="2.5" />
+      <circle cx="17" cy="17" r="2.5" />
+    </svg>
+  );
+}

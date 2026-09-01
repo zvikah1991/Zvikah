@@ -20,8 +20,8 @@ export function ChartTooltip({
 
   return (
     <div
-      className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs backdrop-blur-xl"
-      style={{ background: "color-mix(in oklab, var(--surface) 92%, transparent)", boxShadow: "var(--shadow-lg)" }}
+      className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs"
+      style={{ boxShadow: "var(--shadow-lg)" }}
     >
       {label && <div className="mb-1 font-medium text-[var(--text-primary)]">{label}</div>}
       <div className="flex flex-col gap-1">

@@ -4,6 +4,7 @@ import { EMPTY_FILTERS } from "../types";
 import { distinctSorted } from "../lib/aggregations";
 import { formatMonthKeyShort, monthKeyOf, monthRangeISO, yearOf, yearRangeISO } from "../lib/format";
 import { MultiSelect } from "./ui/MultiSelect";
+import { Button } from "./ui/Button";
 import clsx from "clsx";
 
 type Mode = "all" | "month" | "year" | "custom";
@@ -163,13 +164,9 @@ export function FilterBar({
         </div>
 
         {activeFilterCount > 0 && (
-          <button
-            type="button"
-            onClick={() => onChange(EMPTY_FILTERS)}
-            className="rounded-lg px-2.5 py-1.5 text-sm text-[var(--series-8)] hover:bg-[var(--surface-2)]"
-          >
+          <Button variant="ghost" onClick={() => onChange(EMPTY_FILTERS)} style={{ color: "var(--status-critical)" }}>
             נקה הכל ({activeFilterCount})
-          </button>
+          </Button>
         )}
       </div>
     </div>
