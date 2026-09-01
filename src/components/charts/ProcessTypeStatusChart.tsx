@@ -49,7 +49,7 @@ export function ProcessTypeStatusChart({ records, delayMs }: { records: SalesRec
                     name={status}
                     stackId="status"
                     fill={colorFor(colorScale, status)}
-                    radius={i === statuses.length - 1 ? [0, 4, 4, 0] : i === 0 ? [4, 0, 0, 4] : undefined}
+                    radius={i === statuses.length - 1 ? [0, 6, 6, 0] : i === 0 ? [6, 0, 0, 6] : undefined}
                     maxBarSize={36}
                     animationBegin={(delayMs ?? 0) + 150 + i * 90}
                     animationDuration={500}

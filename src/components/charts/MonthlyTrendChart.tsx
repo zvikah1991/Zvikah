@@ -1,8 +1,8 @@
 import { useId, useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { SalesRecord } from "../../types";
 import { monthlyTrend } from "../../lib/aggregations";
-import { formatCurrency, formatMonthKey, formatMonthKeyShort, formatNumber } from "../../lib/format";
+import { currentMonthKey, formatCurrency, formatMonthKey, formatMonthKeyShort, formatNumber } from "../../lib/format";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { ChartCard, MetricToggle } from "./ChartCard";
 import { ChartTooltip } from "./ChartTooltip";
@@ -72,6 +72,10 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
                     <stop offset="0%" stopColor="var(--series-1)" stopOpacity={1} />
                     <stop offset="100%" stopColor="var(--series-1)" stopOpacity={0.55} />
                   </linearGradient>
+                  <linearGradient id={`${gradientId}-current`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--brand)" stopOpacity={1} />
+                    <stop offset="100%" stopColor="var(--brand)" stopOpacity={0.75} />
+                  </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke="var(--grid)" />
                 <XAxis
@@ -102,13 +106,15 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
                 <Bar
                   dataKey={metric}
                   name={metric === "premium" ? "פרמיה" : "עסקאות"}
-                  fill={`url(#${gradientId})`}
-                  radius={[4, 4, 0, 0]}
+                  radius={[6, 6, 0, 0]}
                   maxBarSize={44}
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}
                   animationEasing="ease-out"
                 >
+                  {trend.map((p) => (
+                    <Cell key={p.monthKey} fill={p.monthKey === currentMonthKey() ? `url(#${gradientId}-current)` : `url(#${gradientId})`} />
+                  ))}
                   {showBarLabels && (
                     <LabelList
                       dataKey={metric}

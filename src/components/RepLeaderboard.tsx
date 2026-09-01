@@ -85,24 +85,27 @@ const RANK_STYLES: Record<1 | 2 | 3, { bg: string; border: string; lift: string 
 function PodiumTile({ rank, entry, className }: { rank: 1 | 2 | 3; entry?: CategoryPoint; className?: string }) {
   if (!entry) return <div className={clsx("flex-1", className)} aria-hidden="true" />;
   const style = RANK_STYLES[rank];
+  const isFirst = rank === 1;
 
   return (
     <div
       className={clsx(
-        "flex flex-1 flex-col items-center gap-1 rounded-xl border p-2.5 text-center",
+        "flex flex-1 flex-col items-center gap-1 rounded-xl border text-center",
+        isFirst ? "p-3" : "p-2.5",
         style.border,
-        rank === 1 ? "bg-[color-mix(in_oklab,#c9a227_6%,var(--surface))]" : "bg-[var(--surface)]",
+        isFirst ? "bg-[color-mix(in_oklab,#c9a227_6%,var(--surface))]" : "bg-[var(--surface)]",
         className,
       )}
+      style={isFirst ? { boxShadow: "0 0 0 1px color-mix(in oklab, #c9a227 18%, transparent), 0 8px 20px -12px color-mix(in oklab, #c9a227 45%, transparent)" } : undefined}
     >
       <span
-        className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-bold text-white"
+        className={clsx("grid shrink-0 place-items-center rounded-full font-bold text-white", isFirst ? "h-9 w-9 text-base" : "h-8 w-8 text-sm")}
         style={{ background: style.bg, boxShadow: "0 1px 2px rgba(0,0,0,0.15)" }}
       >
         {rank}
       </span>
-      <span className="w-full truncate text-sm font-medium">{entry.key}</span>
-      <span className="text-base font-semibold tabular-nums">{formatCurrency(entry.premium)}</span>
+      <span className={clsx("w-full truncate font-medium", isFirst ? "text-base" : "text-sm")}>{entry.key}</span>
+      <span className={clsx("font-semibold tabular-nums", isFirst ? "text-lg" : "text-base")}>{formatCurrency(entry.premium)}</span>
       <span className="text-xs tabular-nums text-[var(--text-muted)]">{formatNumber(entry.count)} עסקאות</span>
     </div>
   );

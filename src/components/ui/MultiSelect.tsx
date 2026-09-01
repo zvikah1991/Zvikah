@@ -42,9 +42,10 @@ export function MultiSelect({
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={clsx(
-          "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors",
-          "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)]",
-          selected.length > 0 && "border-[var(--brand)]/50",
+          "flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors",
+          selected.length > 0
+            ? "border-[var(--brand)]/40 bg-[color-mix(in_oklab,var(--brand)_5%,var(--surface))] hover:bg-[color-mix(in_oklab,var(--brand)_9%,var(--surface))]"
+            : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)]",
         )}
       >
         <span className="text-[var(--text-secondary)]">{label}</span>

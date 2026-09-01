@@ -78,7 +78,7 @@ export function RankedBarChart({
                 <Bar
                   dataKey={metric}
                   name={metric === "premium" ? "פרמיה" : "עסקאות"}
-                  radius={[0, 4, 4, 0]}
+                  radius={[0, 6, 6, 0]}
                   maxBarSize={20}
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}

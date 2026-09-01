@@ -70,14 +70,14 @@ export default function App() {
           onToggleTheme={toggle}
         />
 
-        <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
+        <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-4 sm:px-6 lg:px-8">
           {error && <ErrorBanner message={error} onDismiss={clearError} />}
 
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3" style={{ boxShadow: "var(--shadow-sm)" }}>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-2.5" style={{ boxShadow: "var(--shadow-sm)" }}>
             <FilterBar allRecords={coreRecords} filters={filters} onChange={setFilters} />
           </div>
 
-          <div id="overview" className={`flex flex-col gap-4 ${SCROLL_MARGIN}`}>
+          <div id="overview" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
             <SectionHeading title="סקירה כללית" />
             <InsightBanner records={filteredIgnoringDate} delayMs={0} />
             <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />

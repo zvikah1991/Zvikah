@@ -133,7 +133,7 @@ export function RepByMonthChart({
                 <Bar
                   dataKey="value"
                   name={metric === "premium" ? "פרמיה" : metric === "count" ? "עסקאות" : "קצב חודשי"}
-                  radius={[0, 4, 4, 0]}
+                  radius={[0, 6, 6, 0]}
                   maxBarSize={22}
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}

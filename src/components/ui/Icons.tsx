@@ -198,3 +198,12 @@ export function IconPercent({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconSearch({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} stroke="currentColor">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.3-4.3" />
+    </svg>
+  );
+}

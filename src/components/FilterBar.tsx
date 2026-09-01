@@ -5,6 +5,7 @@ import { distinctSorted } from "../lib/aggregations";
 import { formatMonthKeyShort, monthKeyOf, monthRangeISO, yearOf, yearRangeISO } from "../lib/format";
 import { MultiSelect } from "./ui/MultiSelect";
 import { Button } from "./ui/Button";
+import { IconSearch } from "./ui/Icons";
 import clsx from "clsx";
 
 type Mode = "all" | "month" | "year" | "custom";
@@ -53,7 +54,7 @@ export function FilterBar({
 
   const pillClass = (active: boolean) =>
     clsx(
-      "rounded-lg border-0 bg-transparent px-2.5 py-1 text-sm outline-none transition-colors",
+      "h-8 rounded-lg border-0 bg-transparent px-2.5 text-sm outline-none transition-colors",
       active ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-sm font-medium" : "text-[var(--text-secondary)] hover:bg-[var(--surface)]/60",
     );
 
@@ -68,8 +69,8 @@ export function FilterBar({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex h-9 flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-1">
           <select
             value={mode === "month" ? activeMonth : ""}
             onChange={(e) => {
@@ -118,48 +119,53 @@ export function FilterBar({
         </div>
 
         {customOpen && (
-          <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-2 py-1">
+          <div className="flex h-9 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3">
             <input
               type="date"
               value={filters.dateFrom ?? ""}
               onChange={(e) => onChange({ ...filters, dateFrom: e.target.value || null })}
-              className="rounded-md bg-transparent px-1 py-0.5 text-sm outline-none"
+              className="bg-transparent text-sm outline-none"
             />
             <span className="text-[var(--text-muted)]">—</span>
             <input
               type="date"
               value={filters.dateTo ?? ""}
               onChange={(e) => onChange({ ...filters, dateTo: e.target.value || null })}
-              className="rounded-md bg-transparent px-1 py-0.5 text-sm outline-none"
+              className="bg-transparent text-sm outline-none"
             />
           </div>
         )}
 
-        <div className="h-6 w-px bg-[var(--border)]" />
+        <div className="h-6 w-px bg-[var(--border)]" aria-hidden="true" />
 
-        <MultiSelect label="נציג" options={reps} selected={filters.reps} onChange={(v) => onChange({ ...filters, reps: v })} />
-        <MultiSelect label="סטטוס" options={statuses} selected={filters.statuses} onChange={(v) => onChange({ ...filters, statuses: v })} />
-        <MultiSelect
-          label="סוג תהליך"
-          options={processTypes}
-          selected={filters.processTypes}
-          onChange={(v) => onChange({ ...filters, processTypes: v })}
-        />
-        <MultiSelect label="יצרן" options={insurers} selected={filters.insurers} onChange={(v) => onChange({ ...filters, insurers: v })} />
-        <MultiSelect
-          label="סוג מוצר"
-          options={productTypes}
-          selected={filters.productTypes}
-          onChange={(v) => onChange({ ...filters, productTypes: v })}
-        />
+        <div className="flex flex-wrap items-center gap-1.5">
+          <MultiSelect label="נציג" options={reps} selected={filters.reps} onChange={(v) => onChange({ ...filters, reps: v })} />
+          <MultiSelect label="סטטוס" options={statuses} selected={filters.statuses} onChange={(v) => onChange({ ...filters, statuses: v })} />
+          <MultiSelect
+            label="סוג תהליך"
+            options={processTypes}
+            selected={filters.processTypes}
+            onChange={(v) => onChange({ ...filters, processTypes: v })}
+          />
+          <MultiSelect label="יצרן" options={insurers} selected={filters.insurers} onChange={(v) => onChange({ ...filters, insurers: v })} />
+          <MultiSelect
+            label="סוג מוצר"
+            options={productTypes}
+            selected={filters.productTypes}
+            onChange={(v) => onChange({ ...filters, productTypes: v })}
+          />
+        </div>
 
-        <div className="relative min-w-40 flex-1">
+        <div className="h-6 w-px bg-[var(--border)]" aria-hidden="true" />
+
+        <div className="relative h-9 min-w-40 flex-1">
+          <IconSearch className="pointer-events-none absolute top-1/2 start-3 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
           <input
             type="text"
             placeholder="חיפוש לקוח / נציג / יצרן…"
             value={filters.search}
             onChange={(e) => onChange({ ...filters, search: e.target.value })}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--brand)]/50"
+            className="h-9 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] ps-9 pe-3 text-sm outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]/50"
           />
         </div>
 

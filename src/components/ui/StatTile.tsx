@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
 import { Card } from "./Card";
-import { Sparkline } from "./Sparkline";
 
 export function StatTile({
   label,
@@ -13,7 +12,6 @@ export function StatTile({
   className,
   delayMs,
   progress,
-  sparkline,
 }: {
   label: string;
   value: string;
@@ -27,40 +25,39 @@ export function StatTile({
   delayMs?: number;
   /** 0–1: renders a thin animated fill bar under the value (e.g. "days elapsed this month"). */
   progress?: number;
-  /** Recent trend points (oldest→newest) rendered as a small inline line chart. */
-  sparkline?: number[];
 }) {
   const accentVar = accentColor ?? "var(--brand)";
+  // Tiles that carry a trend (delta) are the ones worth a beat more visual weight — a hint of
+  // their own color instead of flat white, so the eye naturally settles on what's moving.
+  const isFeatured = Boolean(delta && delta.pct !== null);
 
   return (
     <Card
-      className={clsx("hover-lift animate-fade-up overflow-hidden p-4", className)}
-      style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}
+      className={clsx("hover-lift animate-fade-up overflow-hidden p-3.5", className)}
+      style={{
+        ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
+        ...(isFeatured ? { background: `color-mix(in oklab, ${accentVar} 5%, var(--surface))` } : undefined),
+      }}
     >
       <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: accentVar }} aria-hidden="true" />
       <div className="flex items-start justify-between gap-2">
-        <span className="text-xs font-medium text-[var(--text-muted)]">{label}</span>
+        <span className="text-[11px] font-semibold tracking-wide text-[var(--text-muted)] uppercase">{label}</span>
         {icon && (
           <span
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg"
-            style={{ background: `color-mix(in oklab, ${accentVar} 12%, transparent)`, color: accentVar }}
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg"
+            style={{ background: `color-mix(in oklab, ${accentVar} 14%, transparent)`, color: accentVar }}
           >
             {icon}
           </span>
         )}
       </div>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-[26px] font-bold tracking-tight tabular-nums text-[var(--text-primary)]">{value}</span>
+      <div className="mt-1.5 flex items-baseline gap-2">
+        <span className="text-[24px] font-bold tracking-tight tabular-nums text-[var(--text-primary)]">{value}</span>
         {delta && delta.pct !== null && <DeltaBadge pct={delta.pct} positiveIsGood={delta.positiveIsGood ?? true} />}
       </div>
       {sub && <div className="mt-1 text-xs text-[var(--text-muted)]">{sub}</div>}
-      {sparkline && sparkline.length >= 2 && (
-        <div className="mt-2 -mb-1">
-          <Sparkline data={sparkline} color={accentVar} />
-        </div>
-      )}
       {progress !== undefined && (
-        <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--surface-2)]" aria-hidden="true">
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-[var(--surface-2)]" aria-hidden="true">
           <div
             className="animate-grow-width h-full rounded-full"
             style={
@@ -84,8 +81,11 @@ function DeltaBadge({ pct, positiveIsGood }: { pct: number; positiveIsGood: bool
   const color = isGood ? "var(--success-text)" : "var(--status-critical)";
   const arrow = isPositive ? "▲" : "▼";
   return (
-    <span className="flex items-center gap-0.5 text-xs font-medium tabular-nums" style={{ color }}>
-      <span className={clsx("text-[10px]")}>{arrow}</span>
+    <span
+      className="flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold tabular-nums"
+      style={{ color, background: `color-mix(in oklab, ${color} 12%, transparent)` }}
+    >
+      <span className="text-[9px]">{arrow}</span>
       {Math.abs(pct * 100).toFixed(0)}%
     </span>
   );

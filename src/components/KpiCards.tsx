@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import type { SalesRecord } from "../types";
 import { computeKpis, monthlyTrend, monthOverMonth, monthlyPaceProjection } from "../lib/aggregations";
 import { statusBucket } from "../lib/statusBuckets";
-import { formatCurrency, formatMonthKeyShort, formatNumber, formatPercent } from "../lib/format";
+import { formatCurrency, formatMonthKeyShort, formatNumber, formatPercent, currentMonthKey as getCurrentMonthKey } from "../lib/format";
 import { useCountUp } from "../hooks/useCountUp";
 import { loadKpiOrder, saveKpiOrder } from "../lib/storage";
 import { StatTile } from "./ui/StatTile";
@@ -35,7 +35,10 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
   const projected = useCountUp(pace?.projectedPremium ?? 0);
   const goodPremium = useCountUp(kpis.goodPremium);
 
-  const premiumTrend = useMemo(() => monthlyTrend(filteredIgnoringDate).slice(-8).map((p) => p.premium), [filteredIgnoringDate]);
+  const premiumTrend = useMemo(
+    () => monthlyTrend(filteredIgnoringDate).slice(-6).map((p) => ({ monthKey: p.monthKey, premium: p.premium })),
+    [filteredIgnoringDate],
+  );
 
   const [order, setOrder] = useState<TileId[]>(() => {
     const saved = loadKpiOrder();
@@ -86,7 +89,7 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
     },
     avgPremium: {
       render: (delayMs) => (
-        <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} accentColor="var(--series-2)" delayMs={delayMs} />
+        <StatTile label="פרמיה ממוצעת לעסקה" value={formatCurrency(avg)} icon={<IconTarget />} accentColor="var(--brand-soft)" delayMs={delayMs} />
       ),
     },
     customers: {
@@ -143,7 +146,6 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
           accentColor="var(--series-1)"
           delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
           sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : "לפי הסינון הנוכחי"}
-          sparkline={premiumTrend}
           delayMs={delayMs}
         />
       ),
@@ -183,7 +185,8 @@ export function KpiCards({ filtered, filteredIgnoringDate }: { filtered: SalesRe
         value={formatCurrency(premium)}
         delta={comparison ? { pct: comparison.premiumDeltaPct } : undefined}
         sub={comparison ? `${formatMonthKeyShort(comparison.currentLabel)} לעומת ${formatMonthKeyShort(comparison.previousLabel)}` : undefined}
-        sparkline={premiumTrend}
+        trend={premiumTrend}
+        currentMonthKey={getCurrentMonthKey()}
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
         {renderOrder.map((id, i) => {
