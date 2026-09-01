@@ -63,6 +63,18 @@ export function currentMonthKey(today: Date = new Date()): string {
   return `${today.getFullYear()}-${pad2(today.getMonth() + 1)}`;
 }
 
+export function todayISO(today: Date = new Date()): string {
+  return `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
+}
+
+/** Whole days from an ISO date up to today (positive = in the past). */
+export function daysBetween(iso: string, todayIso: string = todayISO()): number {
+  const from = parseISODate(iso);
+  const to = parseISODate(todayIso);
+  if (!from || !to) return 0;
+  return Math.round((to.getTime() - from.getTime()) / 86_400_000);
+}
+
 /** yyyy-mm -> the first/last ISO date of that calendar month. */
 export function monthRangeISO(monthKey: string): { from: string; to: string } {
   const [y, m] = monthKey.split("-").map(Number);

@@ -1,6 +1,7 @@
-import type { Filters, SalesRecord } from "../types";
+import type { Filters, SalesRecord, StatusBucket } from "../types";
 import { monthKeyOf } from "./format";
 import { calendarDayForNthWorkDay, workDaysElapsedInMonth, workDaysInMonth } from "./workdays";
+import { AGENT_APPOINTMENT_COMMISSION_RATE, COMMISSION_BRACKETS, COMMISSION_EXCLUDED_REPS } from "../config";
 
 export function applyFilters(records: SalesRecord[], filters: Filters, opts?: { ignoreDate?: boolean }): SalesRecord[] {
   const search = filters.search.trim().toLowerCase();
@@ -304,4 +305,66 @@ export function distinctSorted(records: SalesRecord[], field: "rep" | "status" |
     if (v) set.add(v);
   }
   return Array.from(set).sort((a, b) => a.localeCompare(b, "he"));
+}
+
+/** Looks up the single bracket multiplier for a given monthly issued-premium total. */
+export function commissionMultiplierFor(issuedPremium: number): number {
+  for (const bracket of COMMISSION_BRACKETS) {
+    if (issuedPremium <= bracket.max) return bracket.multiplier;
+  }
+  return COMMISSION_BRACKETS[COMMISSION_BRACKETS.length - 1].multiplier;
+}
+
+export interface RepCommission {
+  rep: string;
+  issuedPremium: number;
+  multiplier: number;
+  issuedCommission: number;
+  agentAppointmentPremium: number;
+  agentAppointmentCommission: number;
+  totalCommission: number;
+}
+
+/**
+ * Monthly bonus per rep: core premium already issued (הופק) this month is looked up
+ * against the bracket table and multiplied; agent-appointment premium earns a flat
+ * half-commission instead, regardless of status. The agency owner is excluded.
+ */
+export function computeRepCommissions(
+  coreRecords: SalesRecord[],
+  agentAppointmentRecords: SalesRecord[],
+  bucketOf: (status: string | null) => StatusBucket,
+): RepCommission[] {
+  const issuedByRep = new Map<string, number>();
+  for (const r of coreRecords) {
+    if (!r.rep || COMMISSION_EXCLUDED_REPS.includes(r.rep)) continue;
+    if (bucketOf(r.status) !== "good") continue;
+    issuedByRep.set(r.rep, (issuedByRep.get(r.rep) ?? 0) + (r.expectedPremium ?? 0));
+  }
+
+  const appointmentByRep = new Map<string, number>();
+  for (const r of agentAppointmentRecords) {
+    if (!r.rep || COMMISSION_EXCLUDED_REPS.includes(r.rep)) continue;
+    appointmentByRep.set(r.rep, (appointmentByRep.get(r.rep) ?? 0) + (r.expectedPremium ?? 0));
+  }
+
+  const reps = new Set([...issuedByRep.keys(), ...appointmentByRep.keys()]);
+  return Array.from(reps)
+    .map((rep) => {
+      const issuedPremium = issuedByRep.get(rep) ?? 0;
+      const multiplier = commissionMultiplierFor(issuedPremium);
+      const issuedCommission = issuedPremium * multiplier;
+      const agentAppointmentPremium = appointmentByRep.get(rep) ?? 0;
+      const agentAppointmentCommission = agentAppointmentPremium * AGENT_APPOINTMENT_COMMISSION_RATE;
+      return {
+        rep,
+        issuedPremium,
+        multiplier,
+        issuedCommission,
+        agentAppointmentPremium,
+        agentAppointmentCommission,
+        totalCommission: issuedCommission + agentAppointmentCommission,
+      };
+    })
+    .sort((a, b) => b.totalCommission - a.totalCommission);
 }

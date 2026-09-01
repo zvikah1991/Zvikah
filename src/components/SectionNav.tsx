@@ -5,6 +5,7 @@ const SECTIONS = [
   { id: "overview", label: "סקירה כללית" },
   { id: "trends", label: "מגמות ופילוחים" },
   { id: "leaderboard", label: "לוח מובילים" },
+  { id: "commissions", label: "עמלות" },
   { id: "activity", label: "פעילות אחרונה" },
   { id: "customers", label: "לקוחות" },
   { id: "deals", label: "כל העסקאות" },

@@ -67,3 +67,16 @@ export function recentClosedDeals(records: SalesRecord[], bucketOf: (status: str
     .sort((a, b) => (b.requiredDate ?? "").localeCompare(a.requiredDate ?? ""))
     .slice(0, limit);
 }
+
+/** Still-in-progress (warning-bucket) deals whose required-treatment date has already passed — the follow-up worklist. Most overdue first. */
+export function overdueDeals(
+  records: SalesRecord[],
+  bucketOf: (status: string | null) => StatusBucket,
+  todayISO: string,
+  limit = 10,
+): SalesRecord[] {
+  return records
+    .filter((r) => r.requiredDate && r.requiredDate < todayISO && bucketOf(r.status) === "warning")
+    .sort((a, b) => (a.requiredDate ?? "").localeCompare(b.requiredDate ?? ""))
+    .slice(0, limit);
+}

@@ -17,7 +17,9 @@ import { RepByMonthChart } from "./components/charts/RepByMonthChart";
 import { ProcessTypeStatusChart } from "./components/charts/ProcessTypeStatusChart";
 import { RankedBarChart } from "./components/charts/RankedBarChart";
 import { RepLeaderboard } from "./components/RepLeaderboard";
+import { CommissionTable } from "./components/CommissionTable";
 import { RecentClosedList } from "./components/RecentClosedList";
+import { OverdueDealsList } from "./components/OverdueDealsList";
 import { CustomersTable } from "./components/CustomersTable";
 import { DataTable } from "./components/DataTable";
 import { ErrorBanner } from "./components/ui/ErrorBanner";
@@ -96,16 +98,24 @@ export default function App() {
           <RepLeaderboard records={filteredIgnoringDate} delayMs={0} />
         </Reveal>
 
+        <Reveal id="commissions" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
+          <SectionHeading index={4} title="עמלות" />
+          <CommissionTable coreRecords={coreRecords} agentAppointmentRecords={agentAppointmentRecords} delayMs={0} />
+        </Reveal>
+
         <Reveal id="activity" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={4} title="פעילות אחרונה" />
-          <RecentClosedList records={filtered} delayMs={0} />
+          <SectionHeading index={5} title="פעילות אחרונה" />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <OverdueDealsList records={filtered} delayMs={0} />
+            <RecentClosedList records={filtered} delayMs={60} />
+          </div>
         </Reveal>
         <Reveal id="customers" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={5} title="לקוחות" />
+          <SectionHeading index={6} title="לקוחות" />
           <CustomersTable records={filtered} delayMs={0} />
         </Reveal>
         <Reveal id="deals" className="flex flex-col gap-3" style={{ scrollMarginTop: "112px" }}>
-          <SectionHeading index={6} title="כל העסקאות" />
+          <SectionHeading index={7} title="כל העסקאות" />
           <DataTable records={filtered} delayMs={0} />
         </Reveal>
 
