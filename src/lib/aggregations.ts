@@ -1,7 +1,12 @@
 import type { Filters, SalesRecord, StatusBucket } from "../types";
 import { monthKeyOf } from "./format";
 import { calendarDayForNthWorkDay, workDaysElapsedInMonth, workDaysInMonth } from "./workdays";
-import { AGENT_APPOINTMENT_COMMISSION_RATE, COMMISSION_BRACKETS, COMMISSION_EXCLUDED_REPS } from "../config";
+import {
+  AGENT_APPOINTMENT_COMMISSION_RATE,
+  COMMISSION_BRACKETS,
+  COMMISSION_EXCLUDED_REPS,
+  COMMISSION_MULTIPLIER_OVERRIDES,
+} from "../config";
 
 export function applyFilters(records: SalesRecord[], filters: Filters, opts?: { ignoreDate?: boolean }): SalesRecord[] {
   const search = filters.search.trim().toLowerCase();
@@ -319,18 +324,27 @@ export interface RepCommission {
   rep: string;
   issuedPremium: number;
   multiplier: number;
+  isManualMultiplier: boolean;
   issuedCommission: number;
   agentAppointmentPremium: number;
   agentAppointmentCommission: number;
   totalCommission: number;
 }
 
+/** A manually-set multiplier for this rep in this month, if one was configured, overriding the bracket lookup. */
+export function commissionMultiplierOverrideFor(monthKey: string, rep: string): number | null {
+  const match = COMMISSION_MULTIPLIER_OVERRIDES.find((o) => o.month === monthKey && o.rep === rep);
+  return match ? match.multiplier : null;
+}
+
 /**
  * Monthly bonus per rep: core premium already issued (הופק) this month is looked up
- * against the bracket table and multiplied; agent-appointment premium earns a flat
+ * against the bracket table and multiplied (unless a manual override multiplier is
+ * configured for that rep/month); agent-appointment premium earns a flat
  * half-commission instead, regardless of status. The agency owner is excluded.
  */
 export function computeRepCommissions(
+  monthKey: string,
   coreRecords: SalesRecord[],
   agentAppointmentRecords: SalesRecord[],
   bucketOf: (status: string | null) => StatusBucket,
@@ -352,7 +366,8 @@ export function computeRepCommissions(
   return Array.from(reps)
     .map((rep) => {
       const issuedPremium = issuedByRep.get(rep) ?? 0;
-      const multiplier = commissionMultiplierFor(issuedPremium);
+      const override = commissionMultiplierOverrideFor(monthKey, rep);
+      const multiplier = override ?? commissionMultiplierFor(issuedPremium);
       const issuedCommission = issuedPremium * multiplier;
       const agentAppointmentPremium = appointmentByRep.get(rep) ?? 0;
       const agentAppointmentCommission = agentAppointmentPremium * AGENT_APPOINTMENT_COMMISSION_RATE;
@@ -360,6 +375,7 @@ export function computeRepCommissions(
         rep,
         issuedPremium,
         multiplier,
+        isManualMultiplier: override !== null,
         issuedCommission,
         agentAppointmentPremium,
         agentAppointmentCommission,

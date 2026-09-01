@@ -33,7 +33,7 @@ export function CommissionTable({
 
   const rows = useMemo(() => {
     const { from, to } = monthRangeISO(activeMonth);
-    return computeRepCommissions(inMonth(coreRecords, from, to), inMonth(agentAppointmentRecords, from, to), statusBucket);
+    return computeRepCommissions(activeMonth, inMonth(coreRecords, from, to), inMonth(agentAppointmentRecords, from, to), statusBucket);
   }, [coreRecords, agentAppointmentRecords, activeMonth]);
 
   const totalBonus = rows.reduce((sum, r) => sum + r.totalCommission, 0);
@@ -85,7 +85,14 @@ export function CommissionTable({
               <tr key={r.rep} className="border-b border-[var(--border)] last:border-0">
                 <td className="py-1.5 pe-3 font-medium">{r.rep}</td>
                 <td className="py-1.5 pe-3 text-end tabular-nums">{formatCurrency(r.issuedPremium)}</td>
-                <td className="py-1.5 pe-3 text-end tabular-nums text-[var(--text-secondary)]">×{r.multiplier}</td>
+                <td className="py-1.5 pe-3 text-end tabular-nums text-[var(--text-secondary)]">
+                  ×{r.multiplier}
+                  {r.isManualMultiplier && (
+                    <span className="ms-1 rounded px-1 py-0.5 text-[10px] font-medium text-[var(--brand-gold)]" title="מדרגה ידנית, לא מהטבלה הרגילה">
+                      ידני
+                    </span>
+                  )}
+                </td>
                 <td className="py-1.5 pe-3 text-end tabular-nums">{formatCurrency(r.issuedCommission)}</td>
                 <td className="py-1.5 pe-3 text-end tabular-nums text-[var(--text-secondary)]">{formatCurrency(r.agentAppointmentPremium)}</td>
                 <td className="py-1.5 pe-3 text-end tabular-nums text-[var(--text-secondary)]">{formatCurrency(r.agentAppointmentCommission)}</td>

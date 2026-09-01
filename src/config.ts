@@ -23,3 +23,9 @@ export const COMMISSION_BRACKETS: { max: number; multiplier: number }[] = [
 export const AGENT_APPOINTMENT_COMMISSION_RATE = 0.5;
 // The agency owner isn't a commissioned rep.
 export const COMMISSION_EXCLUDED_REPS = ["צביקה חדד"];
+
+// One-off manual multiplier overrides for a specific rep in a specific month
+// (e.g. a negotiated bonus rate), applied instead of the bracket lookup above.
+export const COMMISSION_MULTIPLIER_OVERRIDES: { month: string; rep: string; multiplier: number }[] = [
+  { month: "2026-08", rep: "ניב תורתי", multiplier: 4 },
+];
