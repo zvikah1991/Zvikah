@@ -41,7 +41,12 @@ export function ProcessTypeStatusChart({ records, delayMs }: { records: SalesRec
                 <XAxis type="number" allowDecimals={false} tick={{ fill: "var(--text-muted)", fontSize: 12 }} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="key" tick={{ fill: "var(--text-primary)", fontSize: 12 }} axisLine={false} tickLine={false} width={130} />
                 <Tooltip cursor={{ fill: "var(--surface-2)" }} content={<ChartTooltip formatter={(item) => formatNumber(Number(item.value))} />} />
-                <Legend formatter={(value) => <span style={{ color: "var(--text-secondary)" }}>{value}</span>} wrapperStyle={{ fontSize: 12 }} />
+                <Legend
+                  formatter={(value) => <span style={{ color: "var(--text-secondary)", fontWeight: 500 }}>{value}</span>}
+                  wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+                  iconType="circle"
+                  iconSize={8}
+                />
                 {statuses.map((status, i) => (
                   <Bar
                     key={status}
@@ -49,7 +54,7 @@ export function ProcessTypeStatusChart({ records, delayMs }: { records: SalesRec
                     name={status}
                     stackId="status"
                     fill={colorFor(colorScale, status)}
-                    radius={i === statuses.length - 1 ? [0, 6, 6, 0] : i === 0 ? [6, 0, 0, 6] : undefined}
+                    radius={i === statuses.length - 1 ? [0, 8, 8, 0] : i === 0 ? [8, 0, 0, 8] : undefined}
                     maxBarSize={36}
                     animationBegin={(delayMs ?? 0) + 150 + i * 90}
                     animationDuration={500}

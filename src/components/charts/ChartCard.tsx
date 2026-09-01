@@ -28,26 +28,32 @@ export function ChartCard({
   const [view, setView] = useState<"chart" | "table">("chart");
 
   return (
-    <Card className={clsx("hover-lift animate-fade-up p-4", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
-      <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
+    <Card className={clsx("hover-lift animate-fade-up p-5", className)} style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
         <div>
           <SectionTitle>{title}</SectionTitle>
           {subtitle && <p className="mt-0.5 text-xs text-[var(--text-muted)]">{subtitle}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {toggle}
-          <div className="flex rounded-lg border border-[var(--border)] p-0.5 text-xs">
+          <div className="flex rounded-full bg-[var(--surface-2)] p-0.5 text-xs">
             <button
               type="button"
               onClick={() => setView("chart")}
-              className={clsx("rounded-md px-2 py-1", view === "chart" ? "bg-[var(--surface-2)] font-medium" : "text-[var(--text-muted)]")}
+              className={clsx(
+                "rounded-full px-2.5 py-1 transition-colors",
+                view === "chart" ? "bg-[var(--surface)] font-semibold text-[var(--text-primary)] shadow-sm" : "text-[var(--text-muted)]",
+              )}
             >
               תרשים
             </button>
             <button
               type="button"
               onClick={() => setView("table")}
-              className={clsx("rounded-md px-2 py-1", view === "table" ? "bg-[var(--surface-2)] font-medium" : "text-[var(--text-muted)]")}
+              className={clsx(
+                "rounded-full px-2.5 py-1 transition-colors",
+                view === "table" ? "bg-[var(--surface)] font-semibold text-[var(--text-primary)] shadow-sm" : "text-[var(--text-muted)]",
+              )}
             >
               טבלה
             </button>
@@ -82,18 +88,18 @@ export function ChartCard({
 
 export function MetricToggle({ metric, onChange }: { metric: "premium" | "count"; onChange: (m: "premium" | "count") => void }) {
   return (
-    <div className="flex rounded-lg border border-[var(--border)] p-0.5 text-xs">
+    <div className="flex rounded-full border border-[var(--border)] p-0.5 text-xs">
       <button
         type="button"
         onClick={() => onChange("premium")}
-        className={clsx("rounded-md px-2 py-1", metric === "premium" ? "bg-[var(--surface-2)] font-medium" : "text-[var(--text-muted)]")}
+        className={clsx("rounded-full px-2.5 py-1 transition-colors", metric === "premium" ? "bg-[var(--surface-2)] font-semibold" : "text-[var(--text-muted)]")}
       >
         פרמיה
       </button>
       <button
         type="button"
         onClick={() => onChange("count")}
-        className={clsx("rounded-md px-2 py-1", metric === "count" ? "bg-[var(--surface-2)] font-medium" : "text-[var(--text-muted)]")}
+        className={clsx("rounded-full px-2.5 py-1 transition-colors", metric === "count" ? "bg-[var(--surface-2)] font-semibold" : "text-[var(--text-muted)]")}
       >
         כמות
       </button>

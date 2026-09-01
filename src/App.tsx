@@ -10,7 +10,6 @@ import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { FilterBar } from "./components/FilterBar";
 import { KpiCards } from "./components/KpiCards";
-import { InsightBanner } from "./components/InsightBanner";
 import { AgentAppointmentBanner } from "./components/AgentAppointmentBanner";
 import { MonthlyTrendChart } from "./components/charts/MonthlyTrendChart";
 import { RepByMonthChart } from "./components/charts/RepByMonthChart";
@@ -79,9 +78,8 @@ export default function App() {
 
           <div id="overview" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>
             <SectionHeading title="סקירה כללית" />
-            <InsightBanner records={filteredIgnoringDate} delayMs={0} />
             <KpiCards filtered={filtered} filteredIgnoringDate={filteredIgnoringDate} />
-            <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={0} />
+            <AgentAppointmentBanner records={agentAppointmentFiltered} delayMs={220} />
           </div>
 
           <Reveal id="trends" className={`flex flex-col gap-3 ${SCROLL_MARGIN}`}>

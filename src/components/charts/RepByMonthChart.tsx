@@ -18,13 +18,13 @@ function RepMetricToggle({ metric, onChange }: { metric: Metric; onChange: (m: M
     { id: "pace", label: "קצב חודשי" },
   ];
   return (
-    <div className="flex rounded-lg border border-[var(--border)] p-0.5 text-xs">
+    <div className="flex rounded-full border border-[var(--border)] p-0.5 text-xs">
       {options.map((o) => (
         <button
           key={o.id}
           type="button"
           onClick={() => onChange(o.id)}
-          className={clsx("rounded-md px-2 py-1", metric === o.id ? "bg-[var(--surface-2)] font-medium" : "text-[var(--text-muted)]")}
+          className={clsx("rounded-full px-2.5 py-1 transition-colors", metric === o.id ? "bg-[var(--surface-2)] font-semibold" : "text-[var(--text-muted)]")}
         >
           {o.label}
         </button>
@@ -92,7 +92,7 @@ export function RepByMonthChart({
           <select
             value={selectedMonth}
             onChange={(e) => setMonth(e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs outline-none"
+            className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium outline-none"
           >
             {months.length === 0 && <option value="">אין נתונים</option>}
             {months
@@ -133,7 +133,7 @@ export function RepByMonthChart({
                 <Bar
                   dataKey="value"
                   name={metric === "premium" ? "פרמיה" : metric === "count" ? "עסקאות" : "קצב חודשי"}
-                  radius={[0, 6, 6, 0]}
+                  radius={[0, 8, 8, 0]}
                   maxBarSize={22}
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}

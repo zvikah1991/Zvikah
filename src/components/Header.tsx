@@ -30,7 +30,10 @@ export function Header({
       <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         {/* Branding shows here only when the sidebar is collapsed to a horizontal bar (narrow screens). */}
         <div className="flex items-center gap-2.5 lg:hidden">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--brand)] text-white">
+          <div
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-white"
+            style={{ background: "linear-gradient(150deg, var(--shell-accent), var(--electric-strong))" }}
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 17l6-6 4 4 7-8" />
               <path d="M14 6h7v7" />

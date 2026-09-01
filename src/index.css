@@ -14,15 +14,18 @@
   color-scheme: light;
 
   /* Surfaces — a soft cool-gray canvas, not stark white, with clean white cards resting on it. */
-  --page: #f6f7fa;
+  --page: #f4f5f9;
   --surface: #ffffff;
   --surface-2: #eef1f5;
+  --surface-3: #e4e9f0;
+  --surface-sunken: #eceff4;
   --text-primary: #0f172a;
   --text-secondary: #3f4a5c;
   --text-muted: #64748b;
   --grid: #eef1f5;
   --baseline: #cbd5e1;
   --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
 
   /* Brand — deep, confident navy for chrome/actions, a brighter accent blue for
      links/focus/active states. Kept distinct from the chart series palette below. */
@@ -30,6 +33,23 @@
   --brand-soft: #2f5a94;
   --brand-strong: #122a4a;
   --accent: #2563eb;
+  /* Electric blue — a sparingly-used, higher-energy accent distinct from navy brand chrome. */
+  --electric: #2f6fed;
+  --electric-strong: #1d55c9;
+  /* Muted indigo — secondary analytics accent (comparisons, projections). */
+  --indigo: #5b52d6;
+
+  /* The application shell (sidebar / brand rail) is a deliberate, constant dark-navy
+     surface independent of the light/dark page theme — a strategic premium anchor,
+     not "the whole app going dark." */
+  --shell-bg: #0a1120;
+  --shell-bg-elevated: #101a2e;
+  --shell-border: rgba(255, 255, 255, 0.07);
+  --shell-text: #eef2fa;
+  --shell-text-dim: #8b96ad;
+  --shell-active-bg: rgba(79, 143, 247, 0.16);
+  --shell-active-text: #ffffff;
+  --shell-accent: #4f8ff7;
 
   --series-1: #2a78d6; /* blue */
   --series-2: #eb6834; /* orange */
@@ -47,11 +67,15 @@
 
   --success-text: #15803d;
 
-  /* Three-step elevation scale, used sparingly — contrast and spacing carry most
+  /* Four-step elevation scale, used sparingly — contrast and spacing carry most
      of the hierarchy; shadow is a light finishing touch, not a crutch. */
+  --shadow-xs: 0 1px 1px rgba(15, 23, 42, 0.03);
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 1px 3px rgba(15, 23, 42, 0.05), 0 8px 20px -8px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 4px 6px rgba(15, 23, 42, 0.04), 0 16px 32px -12px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 8px 12px rgba(15, 23, 42, 0.05), 0 28px 48px -16px rgba(15, 23, 42, 0.18);
+  /* Soft inner highlight for dark/tinted premium surfaces — depth without glassmorphism. */
+  --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,17 +84,32 @@
     --page: #0a0e17;
     --surface: #121826;
     --surface-2: #1a2233;
+    --surface-3: #232d42;
+    --surface-sunken: #0e1420;
     --text-primary: #f1f5f9;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     --grid: #1e293b;
     --baseline: #334155;
     --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
 
     --brand: #5b8ad1;
     --brand-soft: #83a9de;
     --brand-strong: #7ba7e0;
     --accent: #60a5fa;
+    --electric: #5b9bff;
+    --electric-strong: #86b6ff;
+    --indigo: #8b83e8;
+
+    --shell-bg: #070c16;
+    --shell-bg-elevated: #0d1526;
+    --shell-border: rgba(255, 255, 255, 0.07);
+    --shell-text: #eef2fa;
+    --shell-text-dim: #8b96ad;
+    --shell-active-bg: rgba(79, 143, 247, 0.2);
+    --shell-active-text: #ffffff;
+    --shell-accent: #5b9bff;
 
     --series-1: #3987e5;
     --series-2: #d95926;
@@ -88,9 +127,12 @@
 
     --success-text: #4ade80;
 
+    --shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.25);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.35);
     --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 8px 12px rgba(0, 0, 0, 0.35), 0 28px 48px -16px rgba(0, 0, 0, 0.5);
+    --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
 }
 
@@ -99,17 +141,32 @@
   --page: #0a0e17;
   --surface: #121826;
   --surface-2: #1a2233;
+  --surface-3: #232d42;
+  --surface-sunken: #0e1420;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   --grid: #1e293b;
   --baseline: #334155;
   --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
 
   --brand: #5b8ad1;
   --brand-soft: #83a9de;
   --brand-strong: #7ba7e0;
   --accent: #60a5fa;
+  --electric: #5b9bff;
+  --electric-strong: #86b6ff;
+  --indigo: #8b83e8;
+
+  --shell-bg: #070c16;
+  --shell-bg-elevated: #0d1526;
+  --shell-border: rgba(255, 255, 255, 0.07);
+  --shell-text: #eef2fa;
+  --shell-text-dim: #8b96ad;
+  --shell-active-bg: rgba(79, 143, 247, 0.2);
+  --shell-active-text: #ffffff;
+  --shell-accent: #5b9bff;
 
   --series-1: #3987e5;
   --series-2: #d95926;
@@ -127,9 +184,12 @@
 
   --success-text: #4ade80;
 
+  --shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.25);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 8px 12px rgba(0, 0, 0, 0.35), 0 28px 48px -16px rgba(0, 0, 0, 0.5);
+  --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 html,
@@ -252,6 +312,66 @@ body {
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* The executive bento grid: one asymmetric composition (hero + tall pace column + two
+   stacked supporting tiles) instead of a uniform row of identical cards. Degrades to a
+   two-column structure on tablet, then a prioritized single-column stack on mobile. */
+.bento-hero-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "hero"
+    "pace"
+    "customers"
+    "avg";
+}
+
+@media (min-width: 640px) {
+  .bento-hero-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "hero hero"
+      "pace customers"
+      "pace avg";
+  }
+}
+
+@media (min-width: 1280px) {
+  .bento-hero-grid {
+    grid-template-columns: 1.7fr 1.7fr 1fr 1fr;
+    grid-template-areas:
+      "hero hero pace customers"
+      "hero hero pace avg";
+  }
+}
+
+.bento-hero-grid > .area-hero {
+  grid-area: hero;
+}
+.bento-hero-grid > .area-pace {
+  grid-area: pace;
+}
+.bento-hero-grid > .area-customers {
+  grid-area: customers;
+}
+.bento-hero-grid > .area-avg {
+  grid-area: avg;
+}
+
+/* Radial progress gauge — set --pct (0-100) and --ring-color inline. Used for pace/target reads. */
+.ring-progress {
+  --ring-track: color-mix(in oklab, var(--ring-color, var(--brand)) 14%, transparent);
+  background: conic-gradient(var(--ring-color, var(--brand)) calc(var(--pct, 0) * 1%), var(--ring-track) 0);
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ring-progress {
+    transition: background 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
 .scrollbar-thin {

@@ -18,15 +18,19 @@ export function OverdueDealsList({ records, delayMs }: { records: SalesRecord[];
       <SectionTitle>עסקאות באיחור — דורשות מעקב</SectionTitle>
       <p className="mt-0.5 text-xs text-[var(--text-muted)]">בטיפול, ותאריך הטיפול הנדרש כבר עבר · הוותיקות ביותר קודם</p>
 
-      <ul className="mt-2.5 flex flex-col">
+      <ul className="relative mt-2.5 flex flex-col">
+        {deals.length > 1 && (
+          <div className="pointer-events-none absolute top-6 bottom-6 start-[22px] w-px bg-[var(--border)]" aria-hidden="true" />
+        )}
         {deals.map((r, i) => (
           <li
             key={r.id}
-            className="animate-fade-up flex items-center gap-3 border-s-2 border-s-transparent border-b border-[var(--border)] px-1.5 py-2 transition-colors last:border-b-0 hover:border-s-[var(--status-warning)] hover:bg-[var(--surface-2)]/60"
+            className="animate-fade-up relative flex items-center gap-3 border-s-2 border-s-transparent px-1.5 py-2 transition-colors hover:border-s-[var(--status-warning)] hover:bg-[var(--surface-2)]/60"
             style={{ animationDelay: `${(delayMs ?? 0) + 120 + i * 45}ms` }}
           >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color-mix(in_oklab,var(--status-warning)_16%,transparent)] text-[var(--status-warning)]">
-              <IconClock className="h-4 w-4" />
+            <span className="relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--surface)] text-[var(--status-warning)] ring-4 ring-[var(--surface)]">
+              <span className="absolute inset-0 rounded-full bg-[color-mix(in_oklab,var(--status-warning)_16%,transparent)]" aria-hidden="true" />
+              <IconClock className="relative h-4 w-4" />
             </span>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold text-[var(--text-primary)]">{r.customer ?? "—"}</div>

@@ -27,16 +27,13 @@ export function StatTile({
   progress?: number;
 }) {
   const accentVar = accentColor ?? "var(--brand)";
-  // Tiles that carry a trend (delta) are the ones worth a beat more visual weight — a hint of
-  // their own color instead of flat white, so the eye naturally settles on what's moving.
-  const isFeatured = Boolean(delta && delta.pct !== null);
 
   return (
     <Card
-      className={clsx("hover-lift animate-fade-up overflow-hidden p-3.5", className)}
+      className={clsx("hover-lift animate-fade-up flex h-full flex-col overflow-hidden p-3.5", className)}
       style={{
         ...(delayMs ? { animationDelay: `${delayMs}ms` } : undefined),
-        ...(isFeatured ? { background: `color-mix(in oklab, ${accentVar} 5%, var(--surface))` } : undefined),
+        background: `linear-gradient(160deg, color-mix(in oklab, ${accentVar} 6%, var(--surface)) 0%, var(--surface) 65%)`,
       }}
     >
       <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: accentVar }} aria-hidden="true" />

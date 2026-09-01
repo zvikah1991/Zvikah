@@ -46,7 +46,7 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
           <select
             value={monthsBack}
             onChange={(e) => setMonthsBack(e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs outline-none"
+            className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium outline-none"
           >
             {MONTHS_BACK_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -69,12 +69,12 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
               <BarChart data={trend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--series-1)" stopOpacity={1} />
-                    <stop offset="100%" stopColor="var(--series-1)" stopOpacity={0.55} />
+                    <stop offset="0%" stopColor="var(--brand-soft)" stopOpacity={0.85} />
+                    <stop offset="100%" stopColor="var(--brand-soft)" stopOpacity={0.45} />
                   </linearGradient>
                   <linearGradient id={`${gradientId}-current`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--brand)" stopOpacity={1} />
-                    <stop offset="100%" stopColor="var(--brand)" stopOpacity={0.75} />
+                    <stop offset="0%" stopColor="var(--electric)" stopOpacity={1} />
+                    <stop offset="100%" stopColor="var(--electric)" stopOpacity={0.8} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke="var(--grid)" />
@@ -106,7 +106,7 @@ export function MonthlyTrendChart({ records, delayMs }: { records: SalesRecord[]
                 <Bar
                   dataKey={metric}
                   name={metric === "premium" ? "פרמיה" : "עסקאות"}
-                  radius={[6, 6, 0, 0]}
+                  radius={[8, 8, 0, 0]}
                   maxBarSize={44}
                   animationBegin={(delayMs ?? 0) + 150}
                   animationDuration={700}

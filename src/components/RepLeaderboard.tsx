@@ -37,76 +37,83 @@ export function RepLeaderboard({ records, delayMs }: { records: SalesRecord[]; d
   );
 }
 
+/**
+ * A performance report, not a game leaderboard: rank distinction comes from restrained
+ * typographic and tonal weight (a quiet navy emphasis on first place) rather than gold
+ * medals or confetti — closer to a private-banking statement than mobile-game chrome.
+ */
 function LeaderboardCard({ title, rows, delayMs }: { title: string; rows: CategoryPoint[]; delayMs?: number }) {
-  const podium = rows.slice(0, 3);
-  const rest = rows.slice(3, 8);
+  const leader = rows[0];
+  const rest = rows.slice(1, 8);
+  const max = Math.max(1, ...rows.slice(0, 8).map((r) => r.premium));
 
   return (
-    <Card className="hover-lift animate-fade-up p-4" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
+    <Card className="hover-lift animate-fade-up p-5" style={delayMs ? { animationDelay: `${delayMs}ms` } : undefined}>
       <SectionTitle>{title}</SectionTitle>
 
-      {podium.length === 0 ? (
+      {!leader ? (
         <div className="grid h-32 place-items-center text-sm text-[var(--text-muted)]">אין נתונים להצגה</div>
       ) : (
-        <div className="mt-3 flex items-stretch gap-2">
-          <PodiumTile rank={2} entry={podium[1]} className="order-1 mt-4" />
-          <PodiumTile rank={1} entry={podium[0]} className="order-2" />
-          <PodiumTile rank={3} entry={podium[2]} className="order-3 mt-6" />
+        <div className="mt-3 flex flex-col gap-1">
+          <div
+            className="flex items-center gap-3.5 rounded-xl border-s-2 px-3.5 py-3"
+            style={{
+              borderInlineStartColor: "var(--brand)",
+              background: "linear-gradient(160deg, color-mix(in oklab, var(--brand) 6%, var(--surface)) 0%, var(--surface) 70%)",
+            }}
+          >
+            <span
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-[15px] font-bold text-white"
+              style={{ background: "var(--brand)" }}
+            >
+              1
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[15px] font-bold text-[var(--text-primary)]">{leader.key}</div>
+              <div className="text-xs text-[var(--text-muted)]">{formatNumber(leader.count)} עסקאות · מוביל/ה בטווח הנוכחי</div>
+            </div>
+            <div className="shrink-0 text-end text-lg font-bold tabular-nums text-[var(--brand-strong)]">{formatCurrency(leader.premium)}</div>
+          </div>
+
+          {rest.length > 0 && (
+            <ul className="mt-1.5 flex flex-col gap-2.5 px-1">
+              {rest.map((r, i) => {
+                const width = Math.max(3, (r.premium / max) * 100);
+                return (
+                  <li key={r.key} className="flex items-center gap-3">
+                    <span
+                      className={clsx(
+                        "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold",
+                        "bg-[var(--surface-2)] text-[var(--text-secondary)]",
+                      )}
+                    >
+                      {i + 2}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-baseline justify-between gap-2">
+                        <span className="truncate text-sm font-medium text-[var(--text-primary)]">{r.key}</span>
+                        <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--text-secondary)]">{formatCurrency(r.premium)}</span>
+                      </div>
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-2)]">
+                        <div
+                          className="animate-grow-width h-full rounded-full bg-[var(--baseline)]"
+                          style={
+                            {
+                              width: `${width}%`,
+                              animationDelay: `${(delayMs ?? 0) + 150 + i * 55}ms`,
+                              "--grow-to": `${width}%`,
+                            } as React.CSSProperties
+                          }
+                        />
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       )}
-
-      {rest.length > 0 && (
-        <table className="mt-3 w-full text-sm">
-          <tbody>
-            {rest.map((r, i) => (
-              <tr
-                key={r.key}
-                className="border-t border-s-2 border-s-transparent border-[var(--border)] transition-colors hover:border-s-[var(--brand)] hover:bg-[var(--surface-2)]/60"
-              >
-                <td className="w-6 py-1.5 ps-1.5 text-xs tabular-nums text-[var(--text-muted)]">{i + 4}</td>
-                <td className="truncate py-1.5">{r.key}</td>
-                <td className="py-1.5 text-end tabular-nums text-[var(--text-muted)]">{formatNumber(r.count)} עסקאות</td>
-                <td className="py-1.5 pe-1.5 text-end font-medium tabular-nums">{formatCurrency(r.premium)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
     </Card>
-  );
-}
-
-const RANK_STYLES: Record<1 | 2 | 3, { bg: string; border: string; lift: string }> = {
-  1: { bg: "linear-gradient(135deg, #f0d38a, #c9a227)", border: "border-[#c9a227]/50", lift: "" },
-  2: { bg: "linear-gradient(135deg, #d8dde3, #9aa3ad)", border: "border-[var(--border)]", lift: "" },
-  3: { bg: "linear-gradient(135deg, #d8a878, #a9723f)", border: "border-[var(--border)]", lift: "" },
-};
-
-function PodiumTile({ rank, entry, className }: { rank: 1 | 2 | 3; entry?: CategoryPoint; className?: string }) {
-  if (!entry) return <div className={clsx("flex-1", className)} aria-hidden="true" />;
-  const style = RANK_STYLES[rank];
-  const isFirst = rank === 1;
-
-  return (
-    <div
-      className={clsx(
-        "flex flex-1 flex-col items-center gap-1 rounded-xl border text-center",
-        isFirst ? "p-3" : "p-2.5",
-        style.border,
-        isFirst ? "bg-[color-mix(in_oklab,#c9a227_6%,var(--surface))]" : "bg-[var(--surface)]",
-        className,
-      )}
-      style={isFirst ? { boxShadow: "0 0 0 1px color-mix(in oklab, #c9a227 18%, transparent), 0 8px 20px -12px color-mix(in oklab, #c9a227 45%, transparent)" } : undefined}
-    >
-      <span
-        className={clsx("grid shrink-0 place-items-center rounded-full font-bold text-white", isFirst ? "h-9 w-9 text-base" : "h-8 w-8 text-sm")}
-        style={{ background: style.bg, boxShadow: "0 1px 2px rgba(0,0,0,0.15)" }}
-      >
-        {rank}
-      </span>
-      <span className={clsx("w-full truncate font-medium", isFirst ? "text-base" : "text-sm")}>{entry.key}</span>
-      <span className={clsx("font-semibold tabular-nums", isFirst ? "text-lg" : "text-base")}>{formatCurrency(entry.premium)}</span>
-      <span className="text-xs tabular-nums text-[var(--text-muted)]">{formatNumber(entry.count)} עסקאות</span>
-    </div>
   );
 }
