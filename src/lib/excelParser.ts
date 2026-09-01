@@ -18,7 +18,16 @@ const HEADER_MAP: Record<string, keyof SalesRecord> = {
   "סוג מוצר חדש": "productType",
 };
 
-const REQUIRED_HEADER = "מספר תהליך";
+// Beyond the process ID, these are the columns the whole dashboard is built
+// on (every filter, chart and KPI keys off the date; the customer name drives
+// the customers table). If they're missing the file loads "successfully" but
+// silently produces records with null dates/customers, which then vanish
+// under the default date filter — so we fail loudly here instead.
+const REQUIRED_HEADERS: { header: string; label: string }[] = [
+  { header: "מספר תהליך", label: "מספר תהליך" },
+  { header: "לקוח", label: "לקוח" },
+  { header: "תאריך טיפול נדרש", label: "תאריך טיפול נדרש" },
+];
 
 export class ExcelParseError extends Error {}
 
@@ -78,9 +87,12 @@ export async function parseWorkflowsExcel(file: File): Promise<SalesRecord[]> {
   }
 
   const headers = rows[0].map((h) => String(h ?? "").trim());
-  if (!headers.includes(REQUIRED_HEADER)) {
+  const missing = REQUIRED_HEADERS.filter((h) => !headers.includes(h.header));
+  if (missing.length > 0) {
+    const missingList = missing.map((h) => `"${h.label}"`).join(", ");
     throw new ExcelParseError(
-      `הקובץ אינו בפורמט הצפוי — לא נמצאה העמודה "${REQUIRED_HEADER}". ודא/י שמדובר בדו"ח "WorkflowsExport" מהמערכת.`,
+      `הקובץ שהועלה חסר את העמודות הבאות: ${missingList}. ` +
+        `ודא/י שמדובר בדו"ח המכירות (הגיליון נקרא "מכירות") ולא בדוח אחר מהמערכת — לדוגמה דוח "תהליכים" מכיל עמודות שונות ולא יעבוד כאן.`,
     );
   }
 
