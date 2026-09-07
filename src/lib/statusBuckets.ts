@@ -3,7 +3,11 @@ import type { StatusBucket } from "../types";
 // Semantic classification of the CRM's raw status strings into a small,
 // fixed set of "health" buckets used for KPI tiles and pill colors.
 const GOOD_STATUSES = new Set(["הופק", "הסתיים טיפול"]);
-const CRITICAL_STATUSES = new Set(["מבוטל", "רג'קט לטיפול"]);
+// A cancellation specifically (as opposed to "רג'קט לטיפול", a deal that never
+// issued in the first place) — the only status that can claw back commission
+// already paid out in a prior month.
+export const CANCELLED_STATUS = "מבוטל";
+const CRITICAL_STATUSES = new Set([CANCELLED_STATUS, "רג'קט לטיפול"]);
 
 export function statusBucket(status: string | null): StatusBucket {
   if (!status) return "neutral";
