@@ -1,6 +1,5 @@
 import type { Filters, SalesRecord, StatusBucket } from "../types";
-import { monthKeyOf, todayISO } from "./format";
-import { CANCELLED_STATUS } from "./statusBuckets";
+import { monthKeyOf } from "./format";
 import { calendarDayForNthWorkDay, workDaysElapsedInMonth, workDaysInMonth } from "./workdays";
 import {
   AGENT_APPOINTMENT_COMMISSION_RATE,
@@ -384,74 +383,4 @@ export function computeRepCommissions(
       };
     })
     .sort((a, b) => b.totalCommission - a.totalCommission);
-}
-
-export interface CancellationChargeback {
-  rep: string;
-  cancelledPremium: number;
-  chargebackAmount: number;
-  dealCount: number;
-}
-
-/**
- * Claws back commission already paid out in a prior month for core deals that have since
- * been marked cancelled (status "מבוטל") in the CRM. Only cancellations of deals originally
- * sold within the last 12 months are considered — older ones are left alone. Deals whose
- * original month IS the current month are excluded here, since they're already naturally
- * excluded from that month's own issued-premium total (nothing was ever paid on them yet).
- *
- * The multiplier is looked up per rep/original-month rather than a single rate, because the
- * bracket depends on that month's total volume: the now-cancelled premium is added back to
- * the rep's remaining "good" premium for that month to reconstruct the total it was
- * multiplied against at the time (or the manual override for that rep/month, if one exists).
- */
-export function computeCancellationChargebacks(
-  coreRecords: SalesRecord[],
-  bucketOf: (status: string | null) => StatusBucket,
-  currentMonth: string,
-  today: Date = new Date(),
-): CancellationChargeback[] {
-  const cutoff = todayISO(new Date(today.getFullYear() - 1, today.getMonth(), today.getDate()));
-
-  const cancelled = coreRecords.filter(
-    (r) =>
-      r.rep &&
-      !COMMISSION_EXCLUDED_REPS.includes(r.rep) &&
-      r.status === CANCELLED_STATUS &&
-      r.requiredDate &&
-      r.requiredDate >= cutoff &&
-      monthKeyOf(r.requiredDate) !== currentMonth,
-  );
-
-  // Group by rep + original month first, since each month can carry its own bracket.
-  const groups = new Map<string, { rep: string; month: string; premium: number; count: number }>();
-  for (const r of cancelled) {
-    const month = monthKeyOf(r.requiredDate!);
-    const key = `${r.rep}__${month}`;
-    const g = groups.get(key) ?? { rep: r.rep!, month, premium: 0, count: 0 };
-    g.premium += r.expectedPremium ?? 0;
-    g.count += 1;
-    groups.set(key, g);
-  }
-
-  const byRep = new Map<string, { chargebackAmount: number; cancelledPremium: number; dealCount: number }>();
-  for (const g of groups.values()) {
-    const remainingGoodPremium = coreRecords
-      .filter((r) => r.rep === g.rep && r.requiredDate && monthKeyOf(r.requiredDate) === g.month && bucketOf(r.status) === "good")
-      .reduce((sum, r) => sum + (r.expectedPremium ?? 0), 0);
-    const reconstructedTotal = remainingGoodPremium + g.premium;
-    const override = commissionMultiplierOverrideFor(g.month, g.rep);
-    const multiplier = override ?? commissionMultiplierFor(reconstructedTotal);
-    const chargebackAmount = g.premium * multiplier;
-
-    const entry = byRep.get(g.rep) ?? { chargebackAmount: 0, cancelledPremium: 0, dealCount: 0 };
-    entry.chargebackAmount += chargebackAmount;
-    entry.cancelledPremium += g.premium;
-    entry.dealCount += g.count;
-    byRep.set(g.rep, entry);
-  }
-
-  return Array.from(byRep.entries())
-    .map(([rep, v]) => ({ rep, cancelledPremium: v.cancelledPremium, chargebackAmount: v.chargebackAmount, dealCount: v.dealCount }))
-    .sort((a, b) => b.chargebackAmount - a.chargebackAmount);
 }
